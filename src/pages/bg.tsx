@@ -23,6 +23,9 @@ export interface ImageFile {
   processedFile?: File;
 }
 
+// Define the model type to improve type safety
+type RemovalModel = 'briaai/RMBG-1.4' | 'Xenova/modnet';
+
 // Sample images from Unsplash
 const sampleImages = [
   'https://res.cloudinary.com/dhzm2rp05/image/upload/samples/logo.jpg',
@@ -36,7 +39,7 @@ export default function BG() {
   const [error, setError] = useState<AppError | null>(null)
   const [isWebGPU, setIsWebGPU] = useState(false)
   const [isIOS, setIsIOS] = useState(false)
-  const [currentModel, setCurrentModel] = useState<'briaai/RMBG-1.4' | 'Xenova/modnet'>('briaai/RMBG-1.4')
+  const [currentModel, setCurrentModel] = useState<RemovalModel>('briaai/RMBG-1.4')
   const [isModelSwitching, setIsModelSwitching] = useState(false)
   const [images, setImages] = useState<ImageFile[]>([])
 
@@ -47,17 +50,18 @@ export default function BG() {
     setIsLoading(false)
   }, [])
 
-  const handleModelChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const newModel = event.target.value as typeof currentModel
+  // Create a properly typed handler for model changes
+  const handleModelChange = async (value: RemovalModel) => {
+    console.log('🚀 ~ handleModelChange ~ value:', value)
     setIsModelSwitching(true)
     setError(null)
     try {
-      const initialized = await initializeModel(newModel)
+      const initialized = await initializeModel(value)
       if (!initialized) {
         throw new Error('Failed to initialize new model')
       }
-      setCurrentModel(newModel)
-      toast.success(`Model changed to ${newModel}`)
+      setCurrentModel(value)
+      toast.success(`Model changed to ${value}`)
     } catch (err) {
       if (err instanceof Error && err.message.includes('Falling back')) {
         setCurrentModel('briaai/RMBG-1.4')
@@ -173,7 +177,7 @@ export default function BG() {
   })
 
   return (
-    <div className="min-h-screen" onPaste={handlePaste}>
+    <div onPaste={handlePaste}>
       <Card className="border-none bg-card/20 backdrop-blur-lg">
         <CardHeader className="border-b border-border">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-2 md:gap-4">
@@ -185,7 +189,7 @@ export default function BG() {
                 <span className="text-muted-foreground hidden md:inline">Model:</span>
                 <Select 
                   value={currentModel} 
-                  onValueChange={(value) => handleModelChange({ target: { value } } as any)}
+                  onValueChange={(value: RemovalModel) => handleModelChange(value)}
                   disabled={!isWebGPU || isLoading || isModelSwitching}
                 >
                   <SelectTrigger className="bg-card/50 border border-border w-full md:w-[200px]">
@@ -241,7 +245,7 @@ export default function BG() {
                       <Button
                         onClick={(e) => {
                           e.stopPropagation()
-                          handleModelChange({ target: { value: 'briaai/RMBG-1.4' }} as any)
+                          handleModelChange('briaai/RMBG-1.4')
                         }}
                         className="bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600 hover:to-purple-600 border-none"
                       >
