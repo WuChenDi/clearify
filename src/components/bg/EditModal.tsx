@@ -39,7 +39,7 @@ const predefinedPatterns = [
 
 export function EditModal({ image, isOpen, onClose, onSave }: EditModalProps) {
   const [bgType, setBgType] = useState('color')
-  const [bgColor, setBgColor] = useState('#ffffff')
+  const [bgColor, setBgColor] = useState('#000000')
   const [customBgImage, setCustomBgImage] = useState<File | null>(null)
   const [selectedEffect, setSelectedEffect] = useState('none')
   const [blurValue, setBlurValue] = useState(50)

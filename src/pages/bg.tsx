@@ -25,14 +25,10 @@ export interface ImageFile {
 
 // Sample images from Unsplash
 const sampleImages = [
-  'https://images.unsplash.com/photo-1601233749202-95d04d5b3c00?q=80&w=2938&auto=format&fit=crop&ixlib=rb-4.0.3',
-  'https://images.unsplash.com/photo-1513013156887-d2bf241c8c82?q=80&w=2970&auto=format&fit=crop&ixlib=rb-4.0.3',
-  'https://images.unsplash.com/photo-1643490745745-e8ca9a3a1c90?q=80&w=2874&auto=format&fit=crop&ixlib=rb-4.0.3',
-  'https://images.unsplash.com/photo-1574158622682-e40e69881006?q=80&w=2333&auto=format&fit=crop&ixlib=rb-4.0.3'
-  // 'https://notes-wudi.vercel.app/images/logo.png',
-  // 'https://res.cloudinary.com/dhzm2rp05/image/upload/live/bnkimad5x2uhhckrrgwj.jpg',
-  // 'https://res.cloudinary.com/dhzm2rp05/image/upload/live/frqwlydme2xvzvttrbgh.jpg',
-  // 'https://res.cloudinary.com/dhzm2rp05/image/upload/live/t7lklpmhyyrk84p5vfqr.jpg'
+  'https://res.cloudinary.com/dhzm2rp05/image/upload/samples/logo.jpg',
+  'https://res.cloudinary.com/dhzm2rp05/image/upload/samples/smile.jpg',
+  'https://res.cloudinary.com/dhzm2rp05/image/upload/samples/animals/three-dogs.jpg',
+  'https://res.cloudinary.com/dhzm2rp05/image/upload/live/t7lklpmhyyrk84p5vfqr.jpg'
 ]
 
 export default function BG() {

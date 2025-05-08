@@ -27,6 +27,7 @@ export const metadata: Metadata = {
   referrer: 'no-referrer-when-downgrade',
   authors: [{ name: 'wudi' }],
   robots: { index: true, follow: true },
+  metadataBase: new URL('https://clearify.pages.dev/'),
   alternates: {
     canonical: '/'
   },
