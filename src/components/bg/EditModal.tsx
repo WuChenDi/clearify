@@ -2,8 +2,8 @@ import { X, Check, Palette, Upload, Image as ImageIcon, Zap } from 'lucide-react
 import Image from 'next/image'
 import React, { useState, useEffect } from 'react'
 
+import { ImageFile } from '@/app/bg/page'
 import { Button } from '@/components/ui/button'
-import { ImageFile } from '@/pages/bg'
 
 interface EditModalProps {
   image: ImageFile;

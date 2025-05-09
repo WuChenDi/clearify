@@ -2,10 +2,11 @@ import { Trash2, Edit2, Download } from 'lucide-react'
 import Image from 'next/image'
 import React, { useState } from 'react'
 
+import { ImageFile } from '@/app/bg/page'
 import { Button } from '@/components/ui/button'
-import { ImageFile } from '@/pages/bg'
 
 import { EditModal } from './EditModal'
+
 
 interface ImagesProps {
   images: ImageFile[];
