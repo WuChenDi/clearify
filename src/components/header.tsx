@@ -41,13 +41,13 @@ export default function Header() {
                 size="icon"
                 aria-label="GitHub"
               >
-                <a
-                  href="https://github.com/WuChenDi"
+                <Link
+                  href="https://github.com/WuChenDi/clearify"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
                   <Github className="w-5 h-5" />
-                </a>
+                </Link>
               </Button>
             </div>
           </div>
