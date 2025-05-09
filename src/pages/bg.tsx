@@ -13,7 +13,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@
 import { processImages, initializeModel, getModelInfo } from '@/lib/process'
 import { cn } from '@/lib/utils'
 
-interface AppError {
+interface BgError {
   message: string;
 }
 
@@ -36,7 +36,7 @@ const sampleImages = [
 
 export default function BG() {
   const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<AppError | null>(null)
+  const [error, setError] = useState<BgError | null>(null)
   const [isWebGPU, setIsWebGPU] = useState(false)
   const [isIOS, setIsIOS] = useState(false)
   const [currentModel, setCurrentModel] = useState<RemovalModel>('briaai/RMBG-1.4')
@@ -52,7 +52,6 @@ export default function BG() {
 
   // Create a properly typed handler for model changes
   const handleModelChange = async (value: RemovalModel) => {
-    console.log('🚀 ~ handleModelChange ~ value:', value)
     setIsModelSwitching(true)
     setError(null)
     try {

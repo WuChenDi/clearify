@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import {
   env,
   AutoModel,
@@ -7,6 +6,8 @@ import {
   PreTrainedModel,
   Processor
 } from '@huggingface/transformers'
+
+import logger from '@/lib/logger'
 
 // Initialize different model configurations
 const WEBGPU_MODEL_ID = 'Xenova/modnet'
@@ -45,13 +46,13 @@ function configureEnv(useProxy: boolean) {
   env.allowLocalModels = false
   env.cacheDir = '' // Disable cache to avoid initialization issues
   if (env.backends?.onnx?.wasm) {
-    console.debug('Configuring WASM backend:', env.backends.onnx.wasm)
+    logger.debug('Configuring WASM backend:', env.backends.onnx.wasm)
     env.backends.onnx.wasm.proxy = useProxy
     env.backends.onnx.wasm.numThreads = 1 // Optimize for single-threaded performance
     env.backends.onnx.wasm.initTimeout = 10000 // Set 10-second timeout for WASM initialization
-    console.debug('WASM backend configured:', env.backends.onnx.wasm)
+    logger.debug('WASM backend configured:', env.backends.onnx.wasm)
   } else {
-    console.warn('WASM backend not available, skipping configuration')
+    logger.warn('WASM backend not available, skipping configuration')
   }
 }
 
@@ -71,7 +72,7 @@ async function initializeWebGPU(): Promise<boolean> {
     await new Promise((resolve) => setTimeout(resolve, 100))
 
     // Log WASM configuration for debugging
-    console.debug('WASM configuration:', env.backends?.onnx?.wasm)
+    logger.debug('WASM configuration:', env.backends?.onnx?.wasm)
     
     state.model = await AutoModel.from_pretrained(WEBGPU_MODEL_ID, {
       device: 'webgpu'
@@ -81,7 +82,7 @@ async function initializeWebGPU(): Promise<boolean> {
     state.currentModelId = WEBGPU_MODEL_ID
     return true
   } catch (error) {
-    console.error('WebGPU initialization failed:', error)
+    logger.error('WebGPU initialization failed:', error)
     return false
   }
 }
@@ -93,7 +94,7 @@ export async function initializeModel(forceModelId?: string): Promise<boolean> {
   try {
     // Always use RMBG-1.4 for iOS
     if (state.isIOS) {
-      console.log('iOS detected, using RMBG-1.4 model')
+      logger.log('iOS detected, using RMBG-1.4 model')
       configureEnv(true)
       state.model = await AutoModel.from_pretrained(FALLBACK_MODEL_ID)
       state.processor = await AutoProcessor.from_pretrained(FALLBACK_MODEL_ID, {
@@ -128,7 +129,7 @@ export async function initializeModel(forceModelId?: string): Promise<boolean> {
         if (progress.progress) {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-expect-error
-          console.log(`Model loading progress: ${(progress.progress).toFixed(2)}%`)
+          logger.log(`Model loading progress: ${(progress.progress).toFixed(2)}%`)
         }
       }
     })
@@ -149,9 +150,9 @@ export async function initializeModel(forceModelId?: string): Promise<boolean> {
     state.currentModelId = FALLBACK_MODEL_ID
     return true
   } catch (error) {
-    console.error('Model initialization failed:', error)
+    logger.error('Model initialization failed:', error)
     if (forceModelId === WEBGPU_MODEL_ID) {
-      console.log('Falling back to cross-browser model...')
+      logger.log('Falling back to cross-browser model...')
       return initializeModel(FALLBACK_MODEL_ID)
     }
     throw new Error(error instanceof Error ? error.message : 'Failed to initialize background removal model')
@@ -210,25 +211,25 @@ export async function processImage(image: File): Promise<File> {
     const [fileName] = image.name.split('.')
     return new File([blob], `${fileName}-bg-blasted.png`, { type: 'image/png' })
   } catch (error) {
-    console.error('Image processing failed:', error)
+    logger.error('Image processing failed:', error)
     throw new Error('Image processing failed')
   }
 }
 
 export async function processImages(images: File[]): Promise<File[]> {
-  console.log('Starting image processing...')
+  logger.log('Starting image processing...')
   const processedFiles: File[] = []
 
   for (const image of images) {
     try {
       const processedFile = await processImage(image)
       processedFiles.push(processedFile)
-      console.log(`Successfully processed image: ${image.name}`)
+      logger.log(`Successfully processed image: ${image.name}`)
     } catch (error) {
-      console.error(`Failed to process image ${image.name}:`, error)
+      logger.error(`Failed to process image ${image.name}:`, error)
     }
   }
 
-  console.log('Image processing completed')
+  logger.log('Image processing completed')
   return processedFiles
 }

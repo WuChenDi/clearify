@@ -1,4 +1,5 @@
 import { ArrowRight, Image, Sparkles } from 'lucide-react'
+import { LucideIcon } from 'lucide-react'
 import Link from 'next/link'
 
 import GradientText from '@/components/reactbits/GradientText'
@@ -6,11 +7,21 @@ import ShinyText from '@/components/reactbits/ShinyText'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
-const tasks = [
+interface Task {
+  id: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  icon: LucideIcon;
+  color: string;
+  route: string;
+}
+
+const tasks: Task[] = [
   {
     id: 'remove-background',
     title: 'Remove Image Background',
-    subtitle: '100% Automatically and Free',
+    subtitle: 'Remove background from any image',
     description:
       'Upload your image and let our AI remove the background instantly. Perfect for professional photos, product images, and more.',
     icon: Image,
@@ -58,7 +69,11 @@ export default function Home() {
                       <CardTitle className="text-2xl font-bold tracking-tight">
                         {task.title}
                       </CardTitle>
-                      <CardDescription className="text-sm mt-1">{task.subtitle}</CardDescription>
+                      {
+                        task.subtitle && (
+                          <CardDescription className="text-sm mt-1">{task.subtitle}</CardDescription>
+                        )
+                      }
                     </div>
                   </div>
                 </CardHeader>
@@ -67,7 +82,7 @@ export default function Home() {
                   <div className="mt-auto pt-6">
                     <Link href={task.route} passHref>
                       <Button 
-                        className={`w-full ${task.color} border-none text-white font-medium shadow-md transition-all duration-300 group-hover:shadow-lg`}
+                        className={`w-full ${task.color} border-none text-white font-medium shadow-md transition-all duration-300 group-hover:shadow-lg cursor-pointer`}
                       >
                         <span className="mr-2">Try it now</span>
                         <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
