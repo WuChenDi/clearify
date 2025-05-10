@@ -1,9 +1,10 @@
-import { X, Check, Palette, Upload, Image as ImageIcon, Zap } from 'lucide-react'
+import { X, Check, Palette, Upload, Image as ImageIcon, Zap, Grid3X3, CircleDot, LineChart, Waves } from 'lucide-react'
 import Image from 'next/image'
 import React, { useState, useEffect } from 'react'
 
 import { ImageFile } from '@/app/bg/page'
 import { Button } from '@/components/ui/button'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 interface EditModalProps {
   image: ImageFile;
@@ -15,7 +16,8 @@ interface EditModalProps {
 
 const backgroundOptions = [
   { id: 'color', label: 'Solid Color', icon: <Palette size={16} /> },
-  { id: 'image', label: 'Image', icon: <ImageIcon size={16} /> }
+  { id: 'image', label: 'Image', icon: <ImageIcon size={16} /> },
+  { id: 'pattern', label: 'Pattern', icon: <Grid3X3 size={16} /> }
 ]
 
 const effectOptions = [
@@ -31,10 +33,114 @@ const predefinedColors = [
 ]
 
 const predefinedPatterns = [
-  { id: 'dots', label: 'Dots' },
-  { id: 'lines', label: 'Lines' },
-  { id: 'grid', label: 'Grid' },
-  { id: 'waves', label: 'Waves' }
+  { 
+    id: 'dots', 
+    label: 'Dots',
+    icon: <CircleDot size={16} />,
+    generate: (canvas: HTMLCanvasElement, color: string = '#333333') => {
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return
+
+      ctx.fillStyle = '#ffffff'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+      ctx.fillStyle = color
+      const dotSize = 4
+      const spacing = 20
+
+      for (let x = 0; x < canvas.width; x += spacing) {
+        for (let y = 0; y < canvas.height; y += spacing) {
+          ctx.beginPath()
+          ctx.arc(x, y, dotSize, 0, Math.PI * 2)
+          ctx.fill()
+        }
+      }
+    }
+  },
+  { 
+    id: 'lines', 
+    label: 'Lines',
+    icon: <LineChart size={16} />,
+    generate: (canvas: HTMLCanvasElement, color: string = '#333333') => {
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return
+
+      ctx.fillStyle = '#ffffff'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+      ctx.strokeStyle = color
+      ctx.lineWidth = 2
+      const spacing = 20
+
+      for (let i = -canvas.height; i < canvas.width + canvas.height; i += spacing) {
+        ctx.beginPath()
+        ctx.moveTo(i, 0)
+        ctx.lineTo(i - canvas.height, canvas.height)
+        ctx.stroke()
+      }
+    }
+  },
+  { 
+    id: 'grid', 
+    label: 'Grid',
+    icon: <Grid3X3 size={16} />,
+    generate: (canvas: HTMLCanvasElement, color: string = '#333333') => {
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return
+
+      ctx.fillStyle = '#ffffff'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+      ctx.strokeStyle = color
+      ctx.lineWidth = 1
+      const spacing = 20
+
+      for (let x = 0; x < canvas.width; x += spacing) {
+        ctx.beginPath()
+        ctx.moveTo(x, 0)
+        ctx.lineTo(x, canvas.height)
+        ctx.stroke()
+      }
+
+      for (let y = 0; y < canvas.height; y += spacing) {
+        ctx.beginPath()
+        ctx.moveTo(0, y)
+        ctx.lineTo(canvas.width, y)
+        ctx.stroke()
+      }
+    }
+  },
+  { 
+    id: 'waves', 
+    label: 'Waves',
+    icon: <Waves size={16} />,
+    generate: (canvas: HTMLCanvasElement, color: string = '#333333') => {
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return
+
+      ctx.fillStyle = '#ffffff'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+      ctx.strokeStyle = color
+      ctx.lineWidth = 3
+      const amplitude = 20
+      const frequency = 0.01
+      const spacing = 30
+
+      for (let y = 0; y < canvas.height; y += spacing) {
+        ctx.beginPath()
+        for (let x = 0; x < canvas.width; x++) {
+          const yOffset = Math.sin(x * frequency) * amplitude
+          if (x === 0) {
+            ctx.moveTo(x, y + yOffset)
+          } else {
+            ctx.lineTo(x, y + yOffset)
+          }
+        }
+        ctx.stroke()
+      }
+    }
+  }
 ]
 
 export function EditModal({ image, isOpen, onClose, onSave }: EditModalProps) {
@@ -48,6 +154,7 @@ export function EditModal({ image, isOpen, onClose, onSave }: EditModalProps) {
   const [exportUrl, setExportUrl] = useState('')
   const [showCustomColorPicker, setShowCustomColorPicker] = useState(false)
   const [effectValue, setEffectValue] = useState(0)
+  const [selectedPattern, setSelectedPattern] = useState('dots')
 
   const processedURL = image.processedFile ? URL.createObjectURL(image.processedFile) : ''
 
@@ -56,7 +163,7 @@ export function EditModal({ image, isOpen, onClose, onSave }: EditModalProps) {
       applyChanges()
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bgType, bgColor, customBgImage, selectedEffect, blurValue, brightnessValue, contrastValue, effectValue])
+  }, [bgType, bgColor, customBgImage, selectedEffect, blurValue, brightnessValue, contrastValue, effectValue, selectedPattern])
 
   const getCurrentEffectValue = () => {
     switch (selectedEffect) {
@@ -86,7 +193,6 @@ export function EditModal({ image, isOpen, onClose, onSave }: EditModalProps) {
     }
   }
 
-
   const applyChanges = async () => {
     if (!image.processedFile) return
     
@@ -110,6 +216,11 @@ export function EditModal({ image, isOpen, onClose, onSave }: EditModalProps) {
       bgImg.src = URL.createObjectURL(customBgImage)
       await new Promise(resolve => bgImg.onload = resolve)
       ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height)
+    } else if (bgType === 'pattern') {
+      const pattern = predefinedPatterns.find(p => p.id === selectedPattern)
+      if (pattern) {
+        pattern.generate(canvas, bgColor)
+      }
     }
     
     // Draw the processed image
@@ -189,75 +300,71 @@ export function EditModal({ image, isOpen, onClose, onSave }: EditModalProps) {
           </Button>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 p-6">
-          <div className="space-y-4">
+        <div className="grid grid-cols-2 gap-6 p-6">
+          <div className="space-y-6">
             <div>
-              <h3 className="font-medium text-white mb-3">Background</h3>
-              <div className="flex space-x-2 mb-4">
-                {backgroundOptions.map(option => (
-                  <Button
-                    key={option.id}
-                    onClick={() => setBgType(option.id)}
-                    variant={bgType === option.id ? 'default' : 'outline'}
-                    className={bgType === option.id 
-                      ? 'bg-blue-500 text-white border-none' 
-                      : 'bg-[#23243a] text-gray-300 hover:bg-[#2a2b45] border-[#353657]'
-                    }
-                  >
-                    <span className="mr-1.5">{option.icon}</span>
-                    {option.label}
-                  </Button>
-                ))}
-              </div>
+              <h3 className="font-medium text-white mb-2">Background</h3>
+              <Tabs value={bgType} onValueChange={setBgType} className="w-full">
+                <TabsList className="grid w-full grid-cols-3 p-0 mb-2 bg-[#23243a]">
+                  {backgroundOptions.map(option => (
+                    <TabsTrigger
+                      key={option.id}
+                      value={option.id}
+                      className="inline-flex items-center justify-center text-[13px] font-medium transition-all"
+                    >
+                      <span className="opacity-70">{option.icon}</span>
+                      <span>{option.label}</span>
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
 
-              {bgType === 'color' && (
-                <div>
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {predefinedColors.map(color => (
-                      <Button
-                        key={color}
-                        onClick={() => setBgColor(color)}
-                        variant="outline"
-                        size="icon"
-                        className={`w-8 h-8 p-0 rounded-md transition-all
-                          ${bgColor === color ? 'ring-2 ring-blue-500' : 'ring-1 ring-[#353657]'}
-                        `}
-                        style={{ backgroundColor: color }}
-                        aria-label={`Color ${color}`}
-                      />
-                    ))}
-                  </div>
-                  <Button
-                    onClick={() => setShowCustomColorPicker(!showCustomColorPicker)}
-                    variant="outline"
-                    size="sm"
-                    className="bg-[#23243a] border-[#353657] text-gray-300 hover:bg-[#2a2b45]"
-                  >
-                    <Palette size={16} className="mr-1.5" />
-                    Custom Color
-                  </Button>
-                  {showCustomColorPicker && (
-                    <div className="mt-2">
-                      <input
-                        type="color"
-                        value={bgColor}
-                        onChange={(e) => setBgColor(e.target.value)}
-                        className="w-8 h-8 rounded"
-                      />
+                <TabsContent value="color">
+                  <div>
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {predefinedColors.map(color => (
+                        <Button
+                          key={color}
+                          onClick={() => setBgColor(color)}
+                          variant="outline"
+                          size="icon"
+                          className={`w-8 h-8 p-0 rounded-md transition-all
+                            ${bgColor === color ? 'ring-2 ring-blue-500' : 'ring-1 ring-[#353657]'}
+                          `}
+                          style={{ backgroundColor: color }}
+                          aria-label={`Color ${color}`}
+                        />
+                      ))}
                     </div>
-                  )}
-                </div>
-              )}
+                    <Button
+                      onClick={() => setShowCustomColorPicker(!showCustomColorPicker)}
+                      variant="outline"
+                      size="sm"
+                      className="bg-[#23243a] border-[#353657] text-gray-300 hover:bg-[#2a2b45]"
+                    >
+                      <Palette size={16} className="mr-1.5" />
+                      Custom Color
+                    </Button>
+                    {showCustomColorPicker && (
+                      <div className="mt-2">
+                        <input
+                          type="color"
+                          value={bgColor}
+                          onChange={(e) => setBgColor(e.target.value)}
+                          className="w-8 h-8 rounded"
+                        />
+                      </div>
+                    )}
+                  </div>
+                </TabsContent>
 
-              {bgType === 'image' && (
-                <div className="bg-[#23243a] rounded-md p-3 border border-[#353657]">
+                <TabsContent value="image">
                   <Button
                     variant="outline"
                     className="w-full bg-[#23243a] border-[#353657] text-gray-300 hover:bg-[#2a2b45] flex items-center justify-center"
                     onClick={() => document.getElementById('bg-image-upload')?.click()}
                   >
                     <Upload size={16} className="mr-1.5" />
-                    Upload Image
+                      Upload Image
                   </Button>
                   <input
                     id="bg-image-upload"
@@ -271,12 +378,53 @@ export function EditModal({ image, isOpen, onClose, onSave }: EditModalProps) {
                       {customBgImage.name}
                     </p>
                   )}
-                </div>
-              )}
+                </TabsContent>
+
+                <TabsContent value="pattern">
+                  <div>
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {predefinedPatterns.map(pattern => (
+                        <Button
+                          key={pattern.id}
+                          onClick={() => setSelectedPattern(pattern.id)}
+                          variant={selectedPattern === pattern.id ? 'default' : 'outline'}
+                          size="sm"
+                          className={`px-2.5 py-1.5 text-sm ${
+                            selectedPattern === pattern.id 
+                              ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white border-none shadow-md' 
+                              : 'bg-[#23243a] text-gray-300 hover:bg-[#2a2b45] border-[#353657] hover:text-white'
+                          }`}
+                        >
+                          <span>{pattern.icon}</span>
+                          {pattern.label}
+                        </Button>
+                      ))}
+                    </div>
+                    <div className="mt-3">
+                      <p className="text-xs text-gray-400 mb-2">Pattern Color:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {predefinedColors.map(color => (
+                          <Button
+                            key={color}
+                            onClick={() => setBgColor(color)}
+                            variant="outline"
+                            size="icon"
+                            className={`w-6 h-6 p-0 rounded-md transition-all
+                              ${bgColor === color ? 'ring-2 ring-blue-500' : 'ring-1 ring-[#353657]'}
+                            `}
+                            style={{ backgroundColor: color }}
+                            aria-label={`Pattern color ${color}`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </TabsContent>
+              </Tabs>
             </div>
 
             <div>
-              <h3 className="font-medium text-white mb-3">Effects</h3>
+              <h3 className="font-medium text-white mb-2">Effects</h3>
               <div className="flex flex-wrap gap-2 mb-4">
                 {effectOptions.map(option => (
                   <Button
@@ -286,12 +434,14 @@ export function EditModal({ image, isOpen, onClose, onSave }: EditModalProps) {
                       setEffectValue(getCurrentEffectValue())
                     }}
                     variant={selectedEffect === option.id ? 'default' : 'outline'}
-                    className={selectedEffect === option.id 
-                      ? 'bg-blue-500 text-white border-none' 
-                      : 'bg-[#23243a] text-gray-300 hover:bg-[#2a2b45] border-[#353657]'
-                    }
+                    size="sm"
+                    className={`px-2.5 py-1.5 text-sm ${
+                      selectedEffect === option.id 
+                        ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white border-none shadow-md' 
+                        : 'bg-[#23243a] text-gray-300 hover:bg-[#2a2b45] border-[#353657] hover:text-white'
+                    }`}
                   >
-                    <span className="mr-1.5">{option.icon}</span>
+                    <span>{option.icon}</span>
                     {option.label}
                   </Button>
                 ))}
@@ -318,7 +468,7 @@ export function EditModal({ image, isOpen, onClose, onSave }: EditModalProps) {
           </div>
 
           <div>
-            <h3 className="font-medium text-white mb-3">Preview</h3>
+            <h3 className="font-medium text-white mb-2">Preview</h3>
             <div className="bg-black rounded-md overflow-hidden relative h-64 flex items-center justify-center">
               <Image
                 src={exportUrl || processedURL}
