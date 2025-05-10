@@ -14,7 +14,6 @@ import '@/app/globals.css'
 
 const inter = Inter({ subsets: ['latin'] })
 
-// 背景效果组件
 const BackgroundEffects = () => (
   <>
     <div className="fixed inset-0">
@@ -107,7 +106,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </main>
         </Providers>
       </body>
-      <GoogleAnalytics gaId="G-SQ7T70ZV18" />
+      <GoogleAnalytics gaId="G-FPHG7CDDVQ" />
     </html>
   )
 }
