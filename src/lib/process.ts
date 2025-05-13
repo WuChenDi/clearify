@@ -10,7 +10,7 @@ import {
 import logger from '@/lib/logger'
 
 // Initialize different model configurations
-const WEBGPU_MODEL_ID = 'Xenova/modnet'
+const WEBGPU_MODEL_ID = 'wuchendi/modnet'
 const FALLBACK_MODEL_ID = 'briaai/RMBG-1.4'
 
 interface ModelState {

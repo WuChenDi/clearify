@@ -24,7 +24,7 @@ export interface ImageFile {
 }
 
 // Define the model type to improve type safety
-type RemovalModel = 'briaai/RMBG-1.4' | 'Xenova/modnet';
+type RemovalModel = 'briaai/RMBG-1.4' | 'wuchendi/MODNet';
 
 // Sample images from Unsplash
 const sampleImages = [
@@ -197,7 +197,7 @@ export default function BG() {
                   <SelectContent className="border-border bg-popover/90">
                     <SelectItem value="briaai/RMBG-1.4">RMBG-1.4 (Cross-browser)</SelectItem>
                     {isWebGPU && (
-                      <SelectItem value="Xenova/modnet">MODNet (WebGPU)</SelectItem>
+                      <SelectItem value="wuchendi/MODNet">MODNet (WebGPU)</SelectItem>
                     )}
                   </SelectContent>
                 </Select>
@@ -240,7 +240,7 @@ export default function BG() {
                   <>
                     <AlertTriangle className="w-12 h-12 text-red-500" />
                     <p className="text-lg text-red-500 font-medium mb-2">{error.message}</p>
-                    {currentModel === 'Xenova/modnet' && (
+                    {currentModel === 'wuchendi/MODNet' && (
                       <Button
                         onClick={(e) => {
                           e.stopPropagation()
