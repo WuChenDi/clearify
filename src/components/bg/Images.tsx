@@ -1,6 +1,7 @@
 import { Trash2, Edit2, Download } from 'lucide-react'
 import Image from 'next/image'
 import React, { useState } from 'react'
+import ReactCompareImage from 'react-compare-image'
 
 import { ImageFile } from '@/app/bg/page'
 import { Button } from '@/components/ui/button'
@@ -91,13 +92,22 @@ function ImageSpot({ image, onDelete }: ImageSpotProps) {
               backgroundRepeat: 'repeat'
             }}
           >
-            <Image
-              className="object-cover transition-opacity duration-200"
-              src={processedImageUrl || processedURL}
-              alt={`Processed image ${image.id}`}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            />
+            <div className="absolute inset-0">
+              {/* <Image
+                className="object-cover transition-opacity duration-200"
+                src={processedImageUrl || processedURL}
+                alt={`Processed image ${image.id}`}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              /> */}
+              <ReactCompareImage
+                leftImage={url}
+                rightImage={processedImageUrl || processedURL}
+                leftImageAlt="Original Image"
+                rightImageAlt="Processed Image"
+              />
+
+            </div>
           </div>
         )}
       </div>
