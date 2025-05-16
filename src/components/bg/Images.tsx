@@ -3,7 +3,7 @@ import Image from 'next/image'
 import React, { useState } from 'react'
 import ReactCompareImage from 'react-compare-image'
 
-import { ImageFile } from '@/app/bg/page'
+import { ImageFile } from '@/app/page'
 import { Button } from '@/components/ui/button'
 
 import { EditModal } from './EditModal'

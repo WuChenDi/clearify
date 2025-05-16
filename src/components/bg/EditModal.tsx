@@ -2,7 +2,7 @@ import { X, Check, Palette, Upload, Image as ImageIcon, Zap, Grid3X3, CircleDot,
 import Image from 'next/image'
 import React, { useState, useEffect } from 'react'
 
-import { ImageFile } from '@/app/bg/page'
+import { ImageFile } from '@/app/page'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 

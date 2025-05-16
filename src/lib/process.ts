@@ -9,20 +9,17 @@ import {
 
 import logger from '@/lib/logger'
 
-// Initialize different model configurations
-const WEBGPU_MODEL_ID = 'wuchendi/modnet'
-const FALLBACK_MODEL_ID = 'briaai/RMBG-1.4'
+// Only using the MODNet model
+const MODEL_ID = 'wuchendi/MODNet'
 
 interface ModelState {
   model: PreTrainedModel | null;
   processor: Processor | null;
   isWebGPUSupported: boolean;
-  currentModelId: string;
   isIOS: boolean;
 }
 
 interface ModelInfo {
-  currentModelId: string;
   isWebGPUSupported: boolean;
   isIOS: boolean;
 }
@@ -36,8 +33,7 @@ const isIOS = () =>
 const state: ModelState = {
   model: null,
   processor: null,
-  isWebGPUSupported: false,
-  currentModelId: FALLBACK_MODEL_ID,
+  isWebGPUSupported: Boolean(navigator.gpu),
   isIOS: isIOS()
 }
 
@@ -56,14 +52,23 @@ function configureEnv(useProxy: boolean) {
   }
 }
 
-// Initialize WebGPU
-async function initializeWebGPU(): Promise<boolean> {
-  if (!navigator.gpu) return false
+// Initialize WebGPU model
+export async function initializeModel(): Promise<boolean> {
+  // Check for WebGPU support
+  if (!navigator.gpu) {
+    throw new Error('WebGPU is not supported in your browser. Please use Chrome 113+ or Edge 113+.')
+  }
+
+  // Check for iOS (which doesn't support WebGPU)
+  if (state.isIOS) {
+    throw new Error('WebGPU is not supported on iOS devices. Please use a desktop browser.')
+  }
 
   try {
     const adapter = await navigator.gpu.requestAdapter()
-    if (!adapter) return false
-
+    if (!adapter) {
+      throw new Error('Failed to get WebGPU adapter. Your GPU may not be supported.')
+    }
 
     // Configure environment for WebGPU
     configureEnv(true) // Enable proxy for reliable WASM loading
@@ -74,55 +79,8 @@ async function initializeWebGPU(): Promise<boolean> {
     // Log WASM configuration for debugging
     logger.debug('WASM configuration:', env.backends?.onnx?.wasm)
     
-    state.model = await AutoModel.from_pretrained(WEBGPU_MODEL_ID, {
-      device: 'webgpu'
-    })
-    state.processor = await AutoProcessor.from_pretrained(WEBGPU_MODEL_ID, {})
-    state.isWebGPUSupported = true
-    state.currentModelId = WEBGPU_MODEL_ID
-    return true
-  } catch (error) {
-    logger.error('WebGPU initialization failed:', error)
-    return false
-  }
-}
-
-// Initialize the model based on the selected model ID
-export async function initializeModel(forceModelId?: string): Promise<boolean> {
-  const selectedModelId = forceModelId || FALLBACK_MODEL_ID
-
-  try {
-    // Always use RMBG-1.4 for iOS
-    if (state.isIOS) {
-      logger.log('iOS detected, using RMBG-1.4 model')
-      configureEnv(true)
-      state.model = await AutoModel.from_pretrained(FALLBACK_MODEL_ID)
-      state.processor = await AutoProcessor.from_pretrained(FALLBACK_MODEL_ID, {
-        config: {
-          do_normalize: true,
-          do_pad: false,
-          do_rescale: true,
-          do_resize: true,
-          image_mean: [0.5, 0.5, 0.5],
-          feature_extractor_type: 'ImageFeatureExtractor',
-          image_std: [1, 1, 1],
-          resample: 2,
-          rescale_factor: 0.00392156862745098,
-          size: { width: 1024, height: 1024 }
-        }
-      })
-      state.currentModelId = FALLBACK_MODEL_ID
-      return true
-    }
-
-    // Try WebGPU
-    if (selectedModelId === WEBGPU_MODEL_ID && (await initializeWebGPU())) {
-      return true
-    }
-
-    // Fallback model
-    configureEnv(true)
-    state.model = await AutoModel.from_pretrained(FALLBACK_MODEL_ID, {
+    state.model = await AutoModel.from_pretrained(MODEL_ID, {
+      device: 'webgpu',
       progress_callback: (progress) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
@@ -133,36 +91,18 @@ export async function initializeModel(forceModelId?: string): Promise<boolean> {
         }
       }
     })
-    state.processor = await AutoProcessor.from_pretrained(FALLBACK_MODEL_ID, {
-      config: {
-        do_normalize: true,
-        do_pad: true,
-        do_rescale: true,
-        do_resize: true,
-        image_mean: [0.5, 0.5, 0.5],
-        feature_extractor_type: 'ImageFeatureExtractor',
-        image_std: [0.5, 0.5, 0.5],
-        resample: 2,
-        rescale_factor: 0.00392156862745098,
-        size: { width: 1024, height: 1024 }
-      }
-    })
-    state.currentModelId = FALLBACK_MODEL_ID
+    state.processor = await AutoProcessor.from_pretrained(MODEL_ID, {})
+    state.isWebGPUSupported = true
     return true
   } catch (error) {
-    logger.error('Model initialization failed:', error)
-    if (forceModelId === WEBGPU_MODEL_ID) {
-      logger.log('Falling back to cross-browser model...')
-      return initializeModel(FALLBACK_MODEL_ID)
-    }
-    throw new Error(error instanceof Error ? error.message : 'Failed to initialize background removal model')
+    logger.error('WebGPU initialization failed:', error)
+    throw new Error(error instanceof Error ? error.message : 'Failed to initialize WebGPU-based model')
   }
 }
 
 // Get current model info
 export function getModelInfo(): ModelInfo {
   return {
-    currentModelId: state.currentModelId,
     isWebGPUSupported: Boolean(navigator.gpu),
     isIOS: state.isIOS
   }
@@ -209,7 +149,7 @@ export async function processImage(image: File): Promise<File> {
     )
 
     const [fileName] = image.name.split('.')
-    return new File([blob], `${fileName}-bg-blasted.png`, { type: 'image/png' })
+    return new File([blob], `${fileName}-bg-removed.png`, { type: 'image/png' })
   } catch (error) {
     logger.error('Image processing failed:', error)
     throw new Error('Image processing failed')

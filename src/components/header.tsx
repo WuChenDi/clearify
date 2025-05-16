@@ -1,10 +1,9 @@
 'use client'
 
-import { Github, ExternalLinkIcon } from 'lucide-react'
+import { Github } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { ThemeToggle } from '@/components/theme-toggle'
 import { Button } from '@/components/ui/button'
 
 export default function Header() {
@@ -26,15 +25,7 @@ export default function Header() {
           </div>
           
           <div className="flex items-center gap-6">
-            <nav className="hidden md:flex items-center gap-6">
-              <Link href="https://cctts.pages.dev/" className="text-white hover:text-gray-200 transition-colors flex items-center gap-1">
-                CCTTS
-                <ExternalLinkIcon className="w-4 h-4" />
-              </Link>
-            </nav>
-            
             <div className="flex items-center gap-2">
-              <ThemeToggle />
               <Button
                 asChild
                 variant="outline"
