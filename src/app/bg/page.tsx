@@ -10,8 +10,10 @@ import { Images } from '@/components/bg/Images'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
+import logger from '@/lib/logger'
 import { processImages, initializeModel, getModelInfo } from '@/lib/process'
 import { cn } from '@/lib/utils'
+
 
 interface BgError {
   message: string;
@@ -24,7 +26,7 @@ export interface ImageFile {
 }
 
 // Define the model type to improve type safety
-type RemovalModel = 'briaai/RMBG-1.4' | 'wuchendi/MODNet';
+type RemovalModel = 'briaai/RMBG-1.4' | 'wuchendi/MODNet' | 'briaai/RMBG-2.0';
 
 // Define model status type
 type ModelStatus = 'ready' | 'unavailable' | 'loading';
@@ -67,22 +69,32 @@ export default function BG() {
         setModelStatus('ready')
         toast.success('MODNet model loaded successfully')
       } catch (err) {
-        // Fallback to RMBG-1.4 if MODNet fails
+        // Fallback to RMBG-2.0, then RMBG-1.4 if needed
         try {
-          const fallbackInitialized = await initializeModel('briaai/RMBG-1.4')
+          const fallbackInitialized = await initializeModel('briaai/RMBG-2.0')
           if (!fallbackInitialized) {
-            throw new Error('Failed to initialize RMBG-1.4 model')
+            throw new Error('Failed to initialize RMBG-2.0 model')
           }
-          setCurrentModel('briaai/RMBG-1.4')
-          setModelStatus('unavailable')
-          setError({ message: 'MODNet not supported, switched to RMBG-1.4' })
-          toast.info('MODNet not supported, switched to RMBG-1.4')
+          setCurrentModel('briaai/RMBG-2.0')
+          setModelStatus('ready')
+          toast.success('RMBG-2.0 model loaded successfully')
         } catch (fallbackErr) {
-          setError({
-            message: fallbackErr instanceof Error ? fallbackErr.message : 'Failed to load any model'
-          })
-          setModelStatus('unavailable')
-          toast.error(`Model loading failed: ${fallbackErr instanceof Error ? fallbackErr.message : 'Unknown error'}`)
+          try {
+            const finalFallbackInitialized = await initializeModel('briaai/RMBG-1.4')
+            if (!finalFallbackInitialized) {
+              throw new Error('Failed to initialize RMBG-1.4 model')
+            }
+            setCurrentModel('briaai/RMBG-1.4')
+            setModelStatus('unavailable')
+            setError({ message: 'MODNet and RMBG-2.0 not supported, switched to RMBG-1.4' })
+            toast.info('Switched to RMBG-1.4 as fallback')
+          } catch (finalErr) {
+            setError({
+              message: finalErr instanceof Error ? finalErr.message : 'Failed to load any model'
+            })
+            setModelStatus('unavailable')
+            toast.error(`Model loading failed: ${finalErr instanceof Error ? finalErr.message : 'Unknown error'}`)
+          }
         }
       } finally {
         setIsLoading(false)
@@ -143,7 +155,7 @@ export default function BG() {
           toast.success('Image processed successfully')
         }
       } catch (error) {
-        console.error('Error processing image:', error)
+        logger.error('Error processing image:', error)
         toast.error(`Processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
       }
     }
@@ -168,15 +180,27 @@ export default function BG() {
   const handleSampleImageClick = async (url: string) => {
     try {
       toast.info('Loading sample image...')
-      const response = await fetch(url)
+      logger.log('Fetching URL:', url)
+      const response = await fetch(url, {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+          'Accept': 'image/jpeg, image/png'
+        }
+      })
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
       const blob = await response.blob()
-      const file = new File([blob], 'sample-image.jpg', { type: 'image/jpeg' })
+      logger.log('Blob received, size:', blob.size)
+      if (!blob.type.startsWith('image/')) {
+        throw new Error('Fetched content is not an image')
+      }
+      const file = new File([blob], 'sample-image.jpg', { type: blob.type })
+      logger.log('File created:', file)
       onDrop([file])
     } catch (error) {
-      console.error('Error loading sample image:', error)
+      logger.error('Error loading sample image:', error)
       toast.error(`Failed to load sample image: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
@@ -241,6 +265,7 @@ export default function BG() {
                   </SelectTrigger>
                   <SelectContent className="border-border bg-popover/90 rounded-md">
                     <SelectItem value="wuchendi/MODNet">MODNet (WebGPU)</SelectItem>
+                    <SelectItem value="briaai/RMBG-2.0">RMBG-2.0 (Advanced)</SelectItem>
                     <SelectItem value="briaai/RMBG-1.4">RMBG-1.4 (Cross-browser)</SelectItem>
                   </SelectContent>
                 </Select>
@@ -287,9 +312,20 @@ export default function BG() {
                       <Button
                         onClick={(e) => {
                           e.stopPropagation()
-                          handleModelChange('briaai/RMBG-1.4')
+                          handleModelChange('briaai/RMBG-2.0')
                         }}
                         className="bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600 hover:to-purple-600 border-none rounded-md px-4 py-2"
+                      >
+                        Switch to RMBG-2.0
+                      </Button>
+                    )}
+                    {(currentModel === 'briaai/RMBG-2.0' || currentModel === 'wuchendi/MODNet') && error.message.includes('not supported') && (
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleModelChange('briaai/RMBG-1.4')
+                        }}
+                        className="bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600 hover:to-purple-600 border-none rounded-md px-4 py-2 mt-2"
                       >
                         Switch to RMBG-1.4
                       </Button>

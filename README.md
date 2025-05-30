@@ -20,8 +20,13 @@ Powerful web-based tools for your image editing needs
   - 🔒 Privacy-focused
   - ⚡ Optional WebGPU acceleration
 
-> **Model:** [RMBG-1.4 (WASM)](https://huggingface.co/briaai/RMBG-1.4) and [MODNet (WebGPU)](https://huggingface.co/wuchendi/MODNet), powered by [Transformers.js](https://www.npmjs.com/package/@huggingface/transformers)
-
+> **Models:**
+>
+> - [MODNet (WebGPU)](https://huggingface.co/wuchendi/MODNet)
+> - [RMBG-2.0 (WASM)](https://huggingface.co/briaai/RMBG-2.0)
+> - [RMBG-1.4 (WASM)](https://huggingface.co/briaai/RMBG-1.4)
+>
+> Powered by [Transformers.js](https://www.npmjs.com/package/@huggingface/transformers)
 
 ## 🌐 Browser Support
 

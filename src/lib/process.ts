@@ -12,6 +12,7 @@ import logger from '@/lib/logger'
 // Initialize different model configurations
 const WEBGPU_MODEL_ID = 'wuchendi/modnet'
 const FALLBACK_MODEL_ID = 'briaai/RMBG-1.4'
+const RMBG_2_0_MODEL_ID = 'briaai/RMBG-2.0'
 
 interface ModelState {
   model: PreTrainedModel | null;
@@ -58,12 +59,17 @@ function configureEnv(useProxy: boolean) {
 
 // Initialize WebGPU
 async function initializeWebGPU(): Promise<boolean> {
-  if (!navigator.gpu) return false
+  if (!navigator.gpu) {
+    logger.warn('WebGPU not supported by this browser')
+    return false
+  }
 
   try {
     const adapter = await navigator.gpu.requestAdapter()
-    if (!adapter) return false
-
+    if (!adapter) {
+      logger.warn('No WebGPU adapter found')
+      return false
+    }
 
     // Configure environment for WebGPU
     configureEnv(true) // Enable proxy for reliable WASM loading
@@ -80,6 +86,7 @@ async function initializeWebGPU(): Promise<boolean> {
     state.processor = await AutoProcessor.from_pretrained(WEBGPU_MODEL_ID, {})
     state.isWebGPUSupported = true
     state.currentModelId = WEBGPU_MODEL_ID
+    logger.log('WebGPU model initialized successfully')
     return true
   } catch (error) {
     logger.error('WebGPU initialization failed:', error)
@@ -92,9 +99,9 @@ export async function initializeModel(forceModelId?: string): Promise<boolean> {
   const selectedModelId = forceModelId || FALLBACK_MODEL_ID
 
   try {
-    // Always use RMBG-1.4 for iOS
+    // Always use RMBG-1.4 for iOS as a fallback
     if (state.isIOS) {
-      logger.log('iOS detected, using RMBG-1.4 model')
+      logger.log('iOS detected, using RMBG-1.4 model as fallback')
       configureEnv(true)
       state.model = await AutoModel.from_pretrained(FALLBACK_MODEL_ID)
       state.processor = await AutoProcessor.from_pretrained(FALLBACK_MODEL_ID, {
@@ -112,6 +119,7 @@ export async function initializeModel(forceModelId?: string): Promise<boolean> {
         }
       })
       state.currentModelId = FALLBACK_MODEL_ID
+      logger.log('RMBG-1.4 model initialized successfully for iOS')
       return true
     }
 
@@ -120,7 +128,30 @@ export async function initializeModel(forceModelId?: string): Promise<boolean> {
       return true
     }
 
-    // Fallback model
+    // Try RMBG-2.0 (non-WebGPU model)
+    if (selectedModelId === RMBG_2_0_MODEL_ID) {
+      configureEnv(true)
+      state.model = await AutoModel.from_pretrained(RMBG_2_0_MODEL_ID)
+      state.processor = await AutoProcessor.from_pretrained(RMBG_2_0_MODEL_ID, {
+        config: {
+          do_normalize: true,
+          do_pad: false,
+          do_rescale: true,
+          do_resize: true,
+          image_mean: [0.5, 0.5, 0.5],
+          feature_extractor_type: 'ImageFeatureExtractor',
+          image_std: [1, 1, 1],
+          resample: 2,
+          rescale_factor: 0.00392156862745098,
+          size: { width: 1024, height: 1024 }
+        }
+      })
+      state.currentModelId = RMBG_2_0_MODEL_ID
+      logger.log('RMBG-2.0 model initialized successfully')
+      return true
+    }
+
+    // Fallback to RMBG-1.4
     configureEnv(true)
     state.model = await AutoModel.from_pretrained(FALLBACK_MODEL_ID, {
       progress_callback: (progress) => {
@@ -151,7 +182,7 @@ export async function initializeModel(forceModelId?: string): Promise<boolean> {
     return true
   } catch (error) {
     logger.error('Model initialization failed:', error)
-    if (forceModelId === WEBGPU_MODEL_ID) {
+    if (forceModelId === WEBGPU_MODEL_ID || forceModelId === RMBG_2_0_MODEL_ID) {
       logger.log('Falling back to cross-browser model...')
       return initializeModel(FALLBACK_MODEL_ID)
     }
