@@ -20,7 +20,16 @@ export default function Header() {
                 height={32}
                 className="rounded-full"
               />
-              <span className="text-white font-medium">Clearify</span>
+              {'Clearify'.split('').map((letter, index) => {
+                return (
+                  <span
+                    key={index}
+                    className='hover:text-fun-pink hover:-mt-2 transition-all duration-500 hover:duration-100 click:goodbyeLetterAnim text-white font-medium'
+                  >
+                    {letter}
+                  </span>
+                )
+              })}
             </Link>
           </div>
           

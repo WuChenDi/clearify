@@ -7,14 +7,11 @@ import { useDropzone } from 'react-dropzone'
 import { toast } from 'sonner'
 
 import { Images } from '@/components/bg/Images'
-import GradientText from '@/components/reactbits/GradientText'
 import ShinyText from '@/components/reactbits/ShinyText'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { processImages, initializeModel, getModelInfo } from '@/lib/process'
 import { cn } from '@/lib/utils'
-
-
 
 interface BgError {
   message: string;
