@@ -12,7 +12,7 @@ Powerful web-based tools for your image editing needs
 
 ## ✨ Features
 
-- 🖼️ Remove Image Background
+- 🖼️ **Remove Image Background**
   - 🎯 One-click background removal
   - 🎨 Replace background with a color or custom image
   - 💾 Export with transparency or filled background
@@ -20,13 +20,28 @@ Powerful web-based tools for your image editing needs
   - 🔒 Privacy-focused
   - ⚡ Optional WebGPU acceleration
 
-> **Models:**
->
-> - [MODNet (WebGPU)](https://huggingface.co/wuchendi/MODNet)
-> - [RMBG-2.0 (WASM)](https://huggingface.co/briaai/RMBG-2.0)
-> - [RMBG-1.4 (WASM)](https://huggingface.co/briaai/RMBG-1.4)
->
-> Powered by [Transformers.js](https://www.npmjs.com/package/@huggingface/transformers)
+  > **Models:**
+  >
+  > - [MODNet (WebGPU)](https://huggingface.co/wuchendi/MODNet)
+  > - [RMBG-2.0 (WASM)](https://huggingface.co/briaai/RMBG-2.0)
+  > - [RMBG-1.4 (WASM)](https://huggingface.co/briaai/RMBG-1.4)
+  >
+  > Powered by [Transformers.js](https://www.npmjs.com/package/@huggingface/transformers)
+
+- 🗜️ **Squish - Batch Image Compression**
+  - 🚀 Batch compress multiple images in the browser
+  - 📏 Supports multiple formats: AVIF, JPEG, JXL, PNG, WebP
+  - 🎚️ Adjustable quality settings (1-100%)
+  - ⚡ High-performance compression using WebAssembly
+  - 📥 Drag-and-drop or paste image support
+  - 💾 Download optimized images individually or in bulk
+  - 🔒 Local processing ensures privacy
+  - 🌐 Intuitive interface with real-time preview
+
+  > **Technologies:**
+  >
+  > - Powered by WebAssembly for efficient compression
+  > - Compatible with modern browser APIs
 
 ## 🌐 Browser Support
 
