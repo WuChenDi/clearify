@@ -8,6 +8,7 @@ Powerful web-based tools for your image editing needs
   <summary>🔍 Preview</summary>
   <img src="https://cdn.jsdelivr.net/gh/cdLab996/picture-lib/wudi/Clearify/index.png" />
   <img src="https://cdn.jsdelivr.net/gh/cdLab996/picture-lib/wudi/Clearify/bg-pages.png" />
+  <img src="https://cdn.jsdelivr.net/gh/cdLab996/picture-lib/wudi/Clearify/squish-pages.png" />
 </details>
 
 ## ✨ Features
