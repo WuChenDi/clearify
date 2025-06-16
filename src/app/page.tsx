@@ -1,4 +1,4 @@
-import { ArrowRight, Image, Sparkles } from 'lucide-react'
+import { ArrowRight, Image, Sparkles, FireExtinguisher } from 'lucide-react'
 import { LucideIcon } from 'lucide-react'
 import Link from 'next/link'
 
@@ -27,6 +27,16 @@ const tasks: Task[] = [
     icon: Image,
     color: 'bg-gradient-to-r from-purple-500 to-blue-500',
     route: '/bg'
+  },
+  {
+    id: 'squish',
+    title: 'Squish',
+    subtitle: 'Batch Image Compression in Browser',
+    description:
+    'A modern browser-based tool that uses WebAssembly for fast image compression. Supports multiple formats with an intuitive interface, preserving quality.',
+    icon: FireExtinguisher,
+    color: 'bg-gradient-to-r from-teal-500 to-cyan-500',
+    route: '/squish'
   }
 ]
 

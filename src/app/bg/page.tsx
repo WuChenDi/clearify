@@ -10,9 +10,9 @@ import { Images } from '@/components/bg/Images'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
+import { cn } from '@/lib'
 import logger from '@/lib/logger'
 import { processImages, initializeModel, getModelInfo } from '@/lib/process'
-import { cn } from '@/lib/utils'
 
 
 interface BgError {
