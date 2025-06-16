@@ -15,6 +15,17 @@ const nextConfig: NextConfig = {
         hostname: 'notes-wudi.pages.dev'
       }
     ]
+  },
+  webpack: (config) => {
+    config.module.rules.push({
+      test: /\.worker\.ts$/,
+      loader: 'worker-loader',
+      options: {
+        filename: 'static/[name].[hash].js',
+        publicPath: '/_next/'
+      }
+    })
+    return config
   }
 }
 
