@@ -98,9 +98,6 @@ importers:
       tailwind-merge:
         specifier: ^3.2.0
         version: 3.3.1
-      worker-loader:
-        specifier: ^3.0.8
-        version: 3.0.8(webpack@5.99.9)
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3
@@ -135,6 +132,9 @@ importers:
       typescript:
         specifier: ^5
         version: 5.8.3
+      worker-loader:
+        specifier: ^3.0.8
+        version: 3.0.8(webpack@5.99.9)
 
 packages:
 

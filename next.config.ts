@@ -18,7 +18,7 @@ const nextConfig: NextConfig = {
   },
   webpack: (config) => {
     config.module.rules.push({
-      test: /\.worker\.ts$/,
+      test: /\.worker\.ts$/, // /\.worker\.(js|mjs)$/
       loader: 'worker-loader',
       options: {
         filename: 'static/[name].[hash].js',
