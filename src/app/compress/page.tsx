@@ -182,33 +182,32 @@ export default function Compress() {
   })
 
   return (
-    <Card className="w-4xl border-none bg-card/20 backdrop-blur-lg">
-      <CardHeader className="border-b border-border">
+    <Card className="w-full max-w-4xl mx-auto border-none bg-card/20 backdrop-blur-lg">
+      <CardHeader className="border-b border-border px-4 sm:px-6">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+          <CardTitle className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
             Video Compressor
           </CardTitle>
-
           <Button
             variant="outline"
             size="icon"
             onClick={() => setShowSettings(true)}
-            className="ml-2"
+            className="ml-2 h-8 w-8 sm:h-9 sm:w-9"
           >
             <Settings className="h-4 w-4" />
           </Button>
         </div>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <p className="mt-2 text-xs sm:text-sm text-muted-foreground">
           Compress videos in your browser by up to 90% for free. No upload required.
         </p>
       </CardHeader>
-      <CardContent className="p-6">
-        <div className="space-y-6 w-full">
+      <CardContent className="p-4 sm:p-6">
+        <div className="space-y-4 sm:space-y-6 w-full">
           {!video ? (
             <div
               {...getRootProps()}
               className={cn(
-                'p-8 md:p-12 border-2 border-dashed rounded-xl text-center cursor-pointer transition-all duration-300 w-full',
+                'p-6 sm:p-8 md:p-12 border-2 border-dashed rounded-xl text-center cursor-pointer transition-all duration-300 w-full',
                 'bg-[#1a1b2e]/40 backdrop-blur-md',
                 'hover:border-blue-500/80 hover:bg-blue-500/10',
                 {
@@ -222,40 +221,40 @@ export default function Compress() {
             >
               <input {...getInputProps()} className="hidden" disabled={isLoading} />
               {isLoading ? (
-                <div className="flex flex-col items-center gap-4">
-                  <Loader2 className="w-14 h-14 text-blue-400 animate-spin" />
-                  <p className="text-lg text-foreground/90">Loading video processor...</p>
+                <div className="flex flex-col items-center gap-3 sm:gap-4">
+                  <Loader2 className="w-10 h-10 sm:w-12 sm:h-12 text-blue-400 animate-spin" />
+                  <p className="text-base sm:text-lg text-foreground/90">Loading video processor...</p>
                 </div>
               ) : error ? (
-                <div className="flex flex-col items-center gap-4">
-                  <AlertTriangle className="w-14 h-14 text-red-500" />
-                  <p className="text-lg text-red-500 font-medium">{error}</p>
+                <div className="flex flex-col items-center gap-3 sm:gap-4">
+                  <AlertTriangle className="w-10 h-10 sm:w-12 sm:h-12 text-red-500" />
+                  <p className="text-base sm:text-lg text-red-500 font-medium">{error}</p>
                   <Button
                     onClick={(e) => {
                       e.stopPropagation()
                       loadFFmpeg()
                     }}
-                    className="bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600 hover:to-purple-600 border-none rounded-md px-4 py-2"
+                    className="bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600 hover:to-purple-600 border-none rounded-md px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base"
                   >
                     Retry Loading
                   </Button>
                 </div>
               ) : (
-                <div className="flex flex-col items-center gap-4">
-                  <FileVideo className="w-14 h-14 text-blue-400" />
-                  <p className="text-xl text-foreground/90">
+                <div className="flex flex-col items-center gap-3 sm:gap-4">
+                  <FileVideo className="w-10 h-10 sm:w-12 sm:h-12 text-blue-400" />
+                  <p className="text-lg sm:text-xl text-foreground/90">
                     {isDragActive ? 'Drop your video here...' : 'Drag and drop a video file here'}
                   </p>
-                  <p className="text-sm text-muted-foreground">or click to select a video (MP4, MOV, etc.)</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">or click to select a video (MP4, MOV, etc.)</p>
                 </div>
               )}
             </div>
           ) : (
-            <div className="space-y-6 w-full">
+            <div className="space-y-4 sm:space-y-6 w-full">
               <div className="flex items-center justify-between w-full">
                 <div className="flex items-center gap-2">
-                  <FileVideo className="w-6 h-6 text-blue-400" />
-                  <span className="font-medium text-foreground/90 truncate max-w-[calc(100%-3rem)]">
+                  <FileVideo className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" />
+                  <span className="font-medium text-sm sm:text-base text-foreground/90 truncate">
                     {video.name}
                   </span>
                 </div>
@@ -263,43 +262,44 @@ export default function Compress() {
                   variant="ghost"
                   size="icon"
                   onClick={resetState}
-                  className="text-gray-400 hover:text-gray-200 hover:bg-gray-700/50"
+                  className="text-gray-400 hover:text-gray-200 hover:bg-gray-700/50 h-8 w-8 sm:h-9 sm:w-9"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-4 h-4 sm:w-5 sm:h-5" />
                 </Button>
               </div>
 
               {!isProcessing && !outputUrl && (
                 <Button
+                  variant="destructive"
                   onClick={compressVideo}
-                  className="w-full bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600 hover:to-purple-600 border-none rounded-md py-2"
+                  className="w-full bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600 hover:to-purple-600 border-none rounded-md py-1 sm:py-2 text-sm sm:text-base"
                   disabled={!isReady || isLoading}
                 >
                   {isLoading ? (
-                    <div className="flex items-center gap-2">
-                      <Loader2 className="w-5 h-5 animate-spin" />
+                    <>
+                      <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
                       <span>Loading...</span>
-                    </div>
+                    </>
                   ) : (
-                    <div className="flex items-center gap-2">
-                      <Upload className="w-5 h-5" />
+                    <>
+                      <Upload className="w-4 h-4 sm:w-5 sm:h-5" />
                       <span>Compress Video</span>
-                    </div>
+                    </>
                   )}
                 </Button>
               )}
 
               {(isProcessing || outputUrl) && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-gray-900/20 p-4 rounded-xl w-full">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 bg-gray-900/20 p-3 sm:p-4 rounded-xl w-full">
                   <div className="flex flex-col items-center">
                     <span className="text-xs uppercase text-gray-400 mb-1">Original</span>
-                    <span className="text-2xl font-bold text-foreground/90">
+                    <span className="text-lg sm:text-2xl font-bold text-foreground/90">
                       {formatFileSize(video.size)}
                     </span>
                   </div>
                   <div className="flex flex-col items-center">
                     <span className="text-xs uppercase text-gray-400 mb-1">Compressed</span>
-                    <span className="text-2xl font-bold text-foreground/90">
+                    <span className="text-lg sm:text-2xl font-bold text-foreground/90">
                       {processedSize ? formatFileSize(processedSize) : '0.0'}
                     </span>
                   </div>
@@ -312,42 +312,42 @@ export default function Compress() {
                     <video
                       ref={videoRef}
                       src={previewUrl}
-                      className="absolute inset-0 w-full h-full opacity-50"
+                      className="absolute inset-0 w-full h-full object-contain opacity-50"
                       muted
                     />
                     <video
                       ref={previewRef}
                       src={previewUrl}
-                      className="absolute inset-0 w-full h-full"
+                      className="absolute inset-0 w-full h-full object-contain"
                       style={{ clipPath: `inset(0 ${100 - progress}% 0 0)` }}
                       muted
                     />
                   </div>
                   <Progress value={progress} className="h-2 w-full" />
-                  <p className="text-center text-sm text-muted-foreground">
+                  <p className="text-center text-xs sm:text-sm text-muted-foreground">
                     Compressing... {progress}%
                   </p>
                 </div>
               )}
 
               {error && !isProcessing && (
-                <div className="flex items-center gap-2 text-red-500 bg-red-500/10 p-4 rounded-lg w-full">
-                  <AlertTriangle className="w-5 h-5" />
-                  <span>{error}</span>
+                <div className="flex items-center gap-2 text-red-500 bg-red-500/10 p-3 sm:p-4 rounded-lg w-full">
+                  <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5" />
+                  <span className="text-sm sm:text-base">{error}</span>
                 </div>
               )}
 
               {outputUrl && (
                 <div className="space-y-4 w-full">
-                  <video src={outputUrl} controls className="w-full rounded-lg" />
-                  <div className="flex flex-col md:flex-row justify-between items-center gap-4 w-full">
-                    <span className="text-sm text-muted-foreground">
+                  <video src={outputUrl} controls className="w-full rounded-lg object-contain" />
+                  <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4 w-full">
+                    <span className="text-xs sm:text-sm text-muted-foreground">
                       Saved {processedSize && ((1 - processedSize / video.size) * 100).toFixed(0)}% of original size
                     </span>
                     <a
                       href={outputUrl}
                       download="compressed-video.mp4"
-                      className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                      className="inline-flex items-center justify-center px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
                     >
                       Download Compressed Video
                     </a>
