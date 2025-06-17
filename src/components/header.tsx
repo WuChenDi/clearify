@@ -36,8 +36,8 @@ export default function Header() {
 
           <div className="flex items-center gap-6">
             <nav className="hidden md:flex items-center gap-6">
-              <Link href="https://cctts.pages.dev/" className="text-white hover:text-gray-200 transition-colors flex items-center gap-1">
-                CCTTS
+              <Link href="https://notes-wudi.pages.dev/projects/" className="text-white hover:text-gray-200 transition-colors flex items-center gap-1 uppercase">
+                more
                 <ExternalLinkIcon className="w-4 h-4" />
               </Link>
             </nav>

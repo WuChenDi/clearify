@@ -66,8 +66,11 @@ const CompressionOptions = ({
     </div>
     {outputType !== 'png' && (
       <div>
-        <label className="block text-xs sm:text-sm font-medium text-foreground/90 mb-2">Quality: {options.quality}%</label>
+        <label htmlFor='imageQualityRangeInput' className="block text-xs sm:text-sm font-medium text-foreground/90 mb-2 tabular-nums">
+          Quality: {options.quality}%
+        </label>
         <Slider
+          id='imageQualityRangeInput'
           value={[options.quality]}
           min={1}
           max={100}
