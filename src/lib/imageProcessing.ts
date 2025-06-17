@@ -1,12 +1,5 @@
-import * as avif from '@jsquash/avif'
-import * as jpeg from '@jsquash/jpeg'
-import * as jxl from '@jsquash/jxl'
-import * as png from '@jsquash/png'
-import * as webp from '@jsquash/webp'
-
 import { ensureWasmLoaded } from '@/lib'
 import type { OutputType, CompressionOptions, AvifEncodeOptions, JpegEncodeOptions, JxlEncodeOptions, WebpEncodeOptions } from '@/types'
-
 
 export async function decode(sourceType: string, fileBuffer: ArrayBuffer): Promise<ImageData> {
   // Ensure WASM is loaded for the source type
@@ -17,16 +10,16 @@ export async function decode(sourceType: string, fileBuffer: ArrayBuffer): Promi
       case 'avif':
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
-        return await avif.decode(fileBuffer)
+        return await (await import('@jsquash/avif')).decode(fileBuffer)
       case 'jpeg':
       case 'jpg':
-        return await jpeg.decode(fileBuffer)
+        return await (await import('@jsquash/jpeg')).decode(fileBuffer)
       case 'jxl':
-        return await jxl.decode(fileBuffer)
+        return await (await import('@jsquash/jxl')).decode(fileBuffer)
       case 'png':
-        return await png.decode(fileBuffer)
+        return await (await import('@jsquash/png')).decode(fileBuffer)
       case 'webp':
-        return await webp.decode(fileBuffer)
+        return await (await import('@jsquash/webp')).decode(fileBuffer)
       default:
         throw new Error(`Unsupported source type: ${sourceType}`)
     }
@@ -47,34 +40,44 @@ export async function encode(outputType: OutputType, imageData: ImageData, optio
           quality: options.quality,
           effort: 4 // Medium encoding effort
         }
-        return await avif.encode(imageData, avifOptions)
+        const avifModule = await import('@jsquash/avif')
+        return await avifModule.encode(imageData, avifOptions)
       }
       case 'jpeg': {
         const jpegOptions: JpegEncodeOptions = {
           quality: options.quality
         }
-        return await jpeg.encode(imageData, jpegOptions)
+        const jpegModule = await import('@jsquash/jpeg')
+        return await jpegModule.encode(imageData, jpegOptions)
       }
       case 'jxl': {
         const jxlOptions: JxlEncodeOptions = {
-          quality: options.quality
+          quality: options.quality,
+          // TODO:
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
+          effort: 4 // Medium encoding effort
         }
-        return await jxl.encode(imageData, jxlOptions)
+        const jxlModule = await import('@jsquash/jxl')
+        return await jxlModule.encode(imageData, jxlOptions)
       }
-      case 'png':
-        return await png.encode(imageData)
       case 'webp': {
         const webpOptions: WebpEncodeOptions = {
           quality: options.quality
         }
-        return await webp.encode(imageData, webpOptions)
+        const webpModule = await import('@jsquash/webp')
+        return await webpModule.encode(imageData, webpOptions)
+      }
+      case 'png': {
+        const pngModule = await import('@jsquash/png')
+        return await pngModule.encode(imageData)
       }
       default:
         throw new Error(`Unsupported output type: ${outputType}`)
     }
   } catch (error) {
-    console.error(`Failed to encode to ${outputType}:`, error)
-    throw new Error(`Failed to encode to ${outputType}`)
+    console.error(`Failed to encode ${outputType} image:`, error)
+    throw new Error(`Failed to encode ${outputType} image`)
   }
 }
 
