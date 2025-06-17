@@ -1,5 +1,7 @@
 'use client'
 
+import { FFmpeg } from '@ffmpeg/ffmpeg'
+import { fetchFile, toBlobURL } from '@ffmpeg/util'
 import { FileVideo, Upload, X, Loader2, AlertTriangle, Settings } from 'lucide-react'
 import React, { useState, useRef, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
@@ -16,8 +18,7 @@ import { ConversionSettings, defaultSettings } from '@/types'
 const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.10/dist/umd'
 
 export default function Compress() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const ffmpegRef = useRef<any>(null)
+  const ffmpegRef = useRef<FFmpeg | null>(null)
   const [isReady, setIsReady] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [video, setVideo] = useState<File | null>(null)
@@ -25,48 +26,26 @@ export default function Compress() {
   const [outputUrl, setOutputUrl] = useState('')
   const [isProcessing, setIsProcessing] = useState(false)
   const [processedSize, setProcessedSize] = useState<number | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string>('')
+  const [previewUrl, setPreviewUrl] = useState('')
   const [settings, setSettings] = useState<ConversionSettings>(defaultSettings)
   const [showSettings, setShowSettings] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [isClient, setIsClient] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
   const previewRef = useRef<HTMLVideoElement>(null)
 
-  useEffect(() => {
-    setIsClient(true)
-  }, [])
-
-  const initFFmpeg = async () => {
-    if (typeof window === 'undefined') return null
-    
-    const { FFmpeg } = await import('@ffmpeg/ffmpeg')
-    const { fetchFile, toBlobURL } = await import('@ffmpeg/util')
-    
-    return { FFmpeg, fetchFile, toBlobURL }
-  }
-
   // Load FFmpeg with logging enabled
   const loadFFmpeg = async () => {
-    if (!isClient) return
-    
     try {
       setIsLoading(true)
       setError(null)
-      
-      const ffmpegModules = await initFFmpeg()
-      if (!ffmpegModules) return
-      
-      const { FFmpeg, toBlobURL } = ffmpegModules
-      
+
       if (!ffmpegRef.current) {
         ffmpegRef.current = new FFmpeg()
       }
-      
+
       const ffmpeg = ffmpegRef.current
       if (!ffmpeg.loaded) {
-        // Enable FFmpeg logging
-        ffmpeg.on('log', ({ message }: { message: string }) => {
+        ffmpeg.on('log', ({ message }) => {
           logger.log('[FFmpeg Log]', message)
         })
         await ffmpeg.load({
@@ -103,12 +82,12 @@ export default function Compress() {
 
   // Generate preview URL for selected video
   useEffect(() => {
-    if (video && isClient) {
+    if (video) {
       const url = URL.createObjectURL(video)
       setPreviewUrl(url)
       return () => URL.revokeObjectURL(url)
     }
-  }, [video, isClient])
+  }, [video])
 
   // Update preview video position based on compression progress
   useEffect(() => {
@@ -122,22 +101,18 @@ export default function Compress() {
 
   // Compress video using FFmpeg
   const compressVideo = async () => {
-    if (!video || !isReady || !isClient) return
+    if (!video || !isReady || !ffmpegRef.current) return
 
     setIsProcessing(true)
     setProgress(0)
     setProcessedSize(0)
     setError(null)
 
-    try {
-      const ffmpegModules = await initFFmpeg()
-      if (!ffmpegModules) return
-      
-      const { fetchFile } = ffmpegModules
-      const ffmpeg = ffmpegRef.current
+    const ffmpeg = ffmpegRef.current
 
+    try {
       await ffmpeg.writeFile('input.mp4', await fetchFile(video))
-      ffmpeg.on('progress', ({ progress: ratio }: { progress: number }) => {
+      ffmpeg.on('progress', ({ progress: ratio }) => {
         const percent = Math.round(ratio * 100)
         setProgress(percent)
         setProcessedSize(Math.min(video.size * ratio * 0.4, video.size * 0.4))
@@ -205,26 +180,6 @@ export default function Compress() {
       toast.info('Video file selected')
     }
   })
-
-  if (!isClient) {
-    return (
-      <Card className="w-4xl border-none bg-card/20 backdrop-blur-lg">
-        <CardHeader className="border-b border-border">
-          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-            Video Compressor
-          </CardTitle>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Loading...
-          </p>
-        </CardHeader>
-        <CardContent className="p-6">
-          <div className="flex justify-center items-center h-48">
-            <Loader2 className="w-8 h-8 animate-spin" />
-          </div>
-        </CardContent>
-      </Card>
-    )
-  }
 
   return (
     <Card className="w-4xl border-none bg-card/20 backdrop-blur-lg">
@@ -339,7 +294,7 @@ export default function Compress() {
                   <div className="flex flex-col items-center">
                     <span className="text-xs uppercase text-gray-400 mb-1">Original</span>
                     <span className="text-2xl font-bold text-foreground/90">
-                      { formatFileSize(video.size) }
+                      {formatFileSize(video.size)}
                     </span>
                   </div>
                   <div className="flex flex-col items-center">
