@@ -44,6 +44,21 @@ Powerful web-based tools for your image editing needs
   > - Powered by WebAssembly for efficient compression
   > - Compatible with modern browser APIs
 
+- 🎥 **Video Compressor**
+  - 🚀 Compress videos up to 90% in your browser
+  - 🎨 Multiple compression methods: CRF, bitrate, percentage, filesize
+  - 🎚️ Customizable video and audio settings
+  - 📏 Supports H.264/H.265 video codecs and AAC/MP3 audio
+  - 📈 Real-time progress visualization
+  - 🔒 Privacy-focused - no uploads required
+  - 🌐 Modern UI with drag-and-drop support
+
+  > **Technologies:**
+  >
+  > - Powered by FFmpeg.js for efficient video processing
+  > - Browser-based processing with WebAssembly
+  > - Real-time progress tracking and preview
+
 ## 🌐 Browser Support
 
 - **Default Experience**: All modern browsers (Chrome, Firefox, Safari, Edge)

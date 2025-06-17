@@ -1,4 +1,4 @@
-import { ArrowRight, Image, Sparkles, FireExtinguisher } from 'lucide-react'
+import { ArrowRight, Image, Video, Sparkles, FireExtinguisher } from 'lucide-react'
 import { LucideIcon } from 'lucide-react'
 import Link from 'next/link'
 
@@ -21,22 +21,31 @@ const tasks: Task[] = [
   {
     id: 'remove-background',
     title: 'Remove Image Background',
-    subtitle: 'Remove background from any image',
+    subtitle: 'AI-powered background removal',
     description:
-      'Upload your image and let our AI remove the background instantly. Perfect for professional photos, product images, and more.',
+      'Instantly remove backgrounds from any image using advanced AI. Perfect for portraits, product photos, and creating transparent images.',
     icon: Image,
     color: 'bg-gradient-to-r from-purple-500 to-blue-500',
     route: '/bg'
   },
   {
     id: 'squish',
-    title: 'Squish',
-    subtitle: 'Batch Image Compression in Browser',
+    title: 'Image Squish',
+    subtitle: 'Smart image compression',
     description:
-    'A modern browser-based tool that uses WebAssembly for fast image compression. Supports multiple formats with an intuitive interface, preserving quality.',
+    'Compress images up to 90% while maintaining quality. Fast browser-based processing with support for multiple formats including JPEG, PNG, and WebP.',
     icon: FireExtinguisher,
-    color: 'bg-gradient-to-r from-teal-500 to-cyan-500',
+    color: 'bg-gradient-to-r from-orange-500 to-red-500',
     route: '/squish'
+  },
+  {
+    id: 'compress',
+    title: 'Video Compress',
+    subtitle: 'Efficient video compression',
+    description: 'Reduce video file sizes by up to 90% without quality loss. Fast browser-based compression with no uploads required.',
+    icon: Video,
+    color: 'bg-gradient-to-r from-teal-500 to-cyan-500',
+    route: '/compress'
   }
 ]
 

@@ -1,7 +1,6 @@
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
-  /* config options here */
   images: {
     unoptimized: true,
     formats: ['image/avif', 'image/webp'],
@@ -17,6 +16,24 @@ const nextConfig: NextConfig = {
     ]
   },
   webpack: (config) => {
+    // webpack: (config, { isServer }) => {
+    // // Enable WebAssembly support
+    // if (!isServer) {
+    //   config.experiments = {
+    //     ...config.experiments,
+    //     asyncWebAssembly: true
+    //   }
+    //   // Handle .wasm files
+    //   config.module.rules.push({
+    //     test: /\.wasm$/,
+    //     type: 'asset/resource',
+    //     generator: {
+    //       filename: 'static/wasm/[name].[hash][ext]'
+    //     }
+    //   })
+    // }
+
+    // Worker loader
     config.module.rules.push({
       test: /\.worker\.ts$/, // /\.worker\.(js|mjs)$/
       loader: 'worker-loader',
