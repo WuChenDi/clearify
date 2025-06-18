@@ -372,10 +372,15 @@ export default function Squish() {
   return (
     <div onPaste={handlePaste} className="container mx-2 sm:mx-auto p-2 sm:p-4">
       <Card className="border-none bg-card/20 backdrop-blur-lg">
-        <CardHeader className="border-b border-border/50 px-4 sm:px-6 py-4">
-          <CardTitle className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent text-center md:text-left">
-            Squish - Compress and convert your images
-          </CardTitle>
+        <CardHeader className="border-b border-border px-4 sm:px-6">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+              Squish
+            </CardTitle>
+          </div>
+          <p className="mt-2 text-xs sm:text-sm text-muted-foreground">
+            Compress and convert your images in your browser by up to 90% for free. No upload required.
+          </p>
         </CardHeader>
         <CardContent className="p-4 sm:p-6 space-y-4 sm:space-y-6">
           <CompressionOptions
