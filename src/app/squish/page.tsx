@@ -1,7 +1,8 @@
 /* eslint-disable no-unused-vars */
 'use client'
 
-import { Upload, Trash2, Download, Loader2, X, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react'
+import JSZip from 'jszip'
+import { Upload, Trash2, Download, Loader2, X, CheckCircle, AlertCircle, ArrowRight, FileArchive } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState, useCallback, useMemo } from 'react'
@@ -28,6 +29,7 @@ const sampleImages = [
 const buttonStyles = {
   base: 'rounded-lg px-4 py-2 transition-all duration-300 shadow-sm focus:ring-2 focus:ring-offset-1 cursor-pointer text-sm sm:text-base',
   download: 'bg-gradient-to-r from-green-500/80 to-teal-500/80 text-white hover:from-green-600 hover:to-teal-600 focus:ring-green-400',
+  downloadZip: 'bg-gradient-to-r from-purple-500/80 to-indigo-500/80 text-white hover:from-purple-600 hover:to-indigo-600 focus:ring-purple-400',
   clear: 'bg-gradient-to-r from-red-500/80 to-orange-500/80 text-white hover:from-red-600 hover:to-orange-600 focus:ring-red-400',
   format: 'bg-[#1a1b2e]/40 text-foreground/80 hover:bg-blue-500/20 hover:text-blue-400 border border-border/30',
   formatActive: 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-sm'
@@ -99,108 +101,122 @@ const ImageItem = ({
   <div
     className={cn(
       'rounded-xl bg-gradient-to-r from-[#1a1b2e]/50 to-[#2a2b3e]/50 backdrop-blur-lg',
-      'border border-border/30 shadow-lg p-4 sm:p-6',
-      'flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1'
+      'border border-border/30 shadow-lg p-4',
+      'transition-all duration-300 hover:shadow-xl hover:-translate-y-1'
     )}
   >
-    {image.preview && (
-      <div className="relative w-20 h-20 sm:w-24 sm:h-24 overflow-hidden rounded-xl border border-border/30">
-        <Link
-          href={image.preview}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block w-full h-full"
-        >
-          <Image
-            src={image.preview}
-            alt={image.file.name}
-            width={80}
-            height={80}
-            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-            unoptimized
-          />
-        </Link>
-      </div>
-    )}
-    <div className="flex-1 min-w-0 w-full">
-      <div className="flex items-center justify-between">
-        <p
-          className="text-sm sm:text-base font-semibold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent truncate"
-          title={image.file.name}
-        >
-          {image.file.name}
-        </p>
-        <div className="flex items-center gap-2 sm:gap-3">
-          {image.status === 'complete' && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => onDownload(image)}
-              className="text-foreground/70 hover:text-blue-400 hover:bg-blue-500/20 rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
-              title="Download"
-              aria-label="Download image"
-            >
-              <Download className="w-4 h-4 sm:w-5 sm:h-5" />
-            </Button>
-          )}
-          {image.status === 'error' && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => onRetry(image.id)}
-              className="text-foreground/70 hover:text-yellow-400 hover:bg-yellow-500/20 rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2"
-              title="Retry"
-              aria-label="Retry image processing"
-            >
-              <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5" />
-            </Button>
-          )}
+    <div className="flex items-start gap-3 mb-3">
+      {image.preview && (
+        <div className="relative w-14 h-14 overflow-hidden rounded-lg border border-border/30 flex-shrink-0">
+          <Link
+            href={image.preview}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-full h-full"
+          >
+            <Image
+              src={image.preview}
+              alt={image.file.name}
+              width={56}
+              height={56}
+              className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+              unoptimized
+            />
+          </Link>
+        </div>
+      )}
+
+      <div className="flex items-center gap-1 ml-auto">
+        {image.status === 'complete' && (
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => onRemove(image.id)}
-            className="text-foreground/70 hover:text-red-400 hover:bg-red-500/20 rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all duration-200 hover:scale-110 focus:ring-2 focus:ring-red-400 focus:ring-offset-2"
-            title="Remove"
-            aria-label="Remove image"
+            onClick={() => onDownload(image)}
+            className="text-foreground/70 hover:text-green-400 hover:bg-green-500/20 rounded-lg w-8 h-8 transition-all duration-200 hover:scale-105"
+            title="Download"
           >
-            <X className="w-4 h-4 sm:w-5 sm:h-5" />
+            <Download className="w-4 h-4" />
           </Button>
-        </div>
+        )}
+        {image.status === 'error' && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => onRetry(image.id)}
+            className="text-foreground/70 hover:text-yellow-400 hover:bg-yellow-500/20 rounded-lg w-8 h-8 transition-all duration-200 hover:scale-105"
+            title="Retry"
+          >
+            <AlertCircle className="w-4 h-4" />
+          </Button>
+        )}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => onRemove(image.id)}
+          className="text-foreground/70 hover:text-red-400 hover:bg-red-200 rounded-lg w-8 h-8 transition-all duration-200 hover:scale-105"
+          title="Remove"
+        >
+          <X className="w-4 h-4" />
+        </Button>
       </div>
-      <div className="mt-2 flex items-center gap-2 text-xs sm:text-sm text-muted-foreground/90">
-        {image.status === 'pending' && <span className="font-medium">Ready to process</span>}
+    </div>
+
+    <div className="mb-3">
+      <p
+        className="text-sm font-semibold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent truncate"
+        title={image.file.name}
+      >
+        {image.file.name}
+      </p>
+    </div>
+
+    <div className="mb-3">
+      <div className="flex items-center text-xs text-muted-foreground/90">
+        {image.status === 'pending' && (
+          <span className="flex items-center gap-1.5 font-medium text-blue-400">
+            <div className="w-2 h-2 rounded-full bg-blue-400/60"></div>
+            Ready to process
+          </span>
+        )}
         {image.status === 'processing' && (
-          <span className="flex items-center gap-2">
-            <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin text-blue-400" />
+          <span className="flex items-center gap-1.5 text-blue-400">
+            <Loader2 className="w-3 h-3 animate-spin" />
             Processing...
           </span>
         )}
         {image.status === 'complete' && (
-          <span className="flex items-center gap-2 text-green-500">
-            <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
+          <span className="flex items-center gap-1.5 text-green-400">
+            <CheckCircle className="w-3 h-3" />
             Complete
           </span>
         )}
         {image.status === 'error' && (
-          <span className="flex items-center gap-2 text-red-500">
-            <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5" />
-            {image.error || 'Error processing image'}
+          <span className="flex items-center gap-1.5 text-red-400">
+            <AlertCircle className="w-3 h-3" />
+            Error
           </span>
         )}
       </div>
-      <div className="mt-2 text-xs sm:text-sm text-muted-foreground/90 flex items-center gap-2">
-        {formatFileSize(image.originalSize)}
-        {image.compressedSize && (
-          <>
-            <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground/90" aria-hidden="true" />
-            {formatFileSize(image.compressedSize)}{' '}
-            <span className="text-green-500">
-              ({Math.round(((image.originalSize - image.compressedSize) / image.originalSize) * 100)}% smaller)
-            </span>
-          </>
-        )}
-      </div>
     </div>
+
+    <div className="text-xs text-muted-foreground/80">
+      <span className="tabular-nums">{formatFileSize(image.originalSize)}</span>
+      {image.compressedSize && (
+        <>
+          <ArrowRight className="inline w-3 h-3 mx-1 text-muted-foreground/60" />
+          <span className="tabular-nums">{formatFileSize(image.compressedSize)}</span>
+          <span className="ml-1 text-green-400 font-medium">
+            (-{Math.round(((image.originalSize - image.compressedSize) / image.originalSize) * 100)}%)
+          </span>
+        </>
+      )}
+    </div>
+
+    {image.status === 'error' && image.error && (
+      <div className="text-xs text-red-400/90 bg-red-500/10 px-2 py-1 rounded mt-3 border border-red-500/20">
+        {image.error}
+      </div>
+    )}
   </div>
 )
 
@@ -208,7 +224,8 @@ const ImageItem = ({
 const SampleImages = ({ onSampleImageClick }: { onSampleImageClick: (url: string) => void }) => (
   <div className="mt-4 sm:mt-6">
     <h3 className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-4">
-      Try Sample Images:
+      Try Sample Images
+      Images:
     </h3>
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-4">
       {sampleImages.map((url, index) => (
@@ -238,6 +255,7 @@ export default function Squish() {
     quality: DEFAULT_QUALITY_SETTINGS.webp
   })
   const [isDownloading, setIsDownloading] = useState(false)
+  const [isZipping, setIsZipping] = useState(false)
 
   const { addToQueue } = useImageQueue(options, outputType, setImages)
 
@@ -361,7 +379,40 @@ export default function Squish() {
       setIsDownloading(false)
     }
   }, [images])
-  
+
+  // Handle downloading all completed images as a ZIP
+  const handleDownloadZip = useCallback(async () => {
+    setIsZipping(true)
+    try {
+      const zip = new JSZip()
+      const completedImages = images.filter((img) => img.status === 'complete')
+
+      for (const image of completedImages) {
+        if (image.blob && image.outputType) {
+          const fileName = `${image.file.name.split('.')[0]}.${image.outputType}`
+          zip.file(fileName, image.blob)
+        }
+      }
+
+      const content = await zip.generateAsync({ type: 'blob' })
+      const url = URL.createObjectURL(content)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'squish-images.zip'
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      URL.revokeObjectURL(url)
+
+      toast.success(`Downloaded ${completedImages.length} image(s) as ZIP`)
+    } catch (error) {
+      logger.error(`Error creating ZIP: ${error instanceof Error ? error.message : 'Unknown error'}`, { images })
+      toast.error('Failed to create ZIP file')
+    } finally {
+      setIsZipping(false)
+    }
+  }, [images])
+
   const {
     getRootProps,
     getInputProps,
@@ -422,19 +473,18 @@ export default function Squish() {
               <p className="text-sm text-muted-foreground">or click to select files (JPEG, PNG, WebP, AVIF, JXL)</p>
             </div>
           </div>
-          {/* <div className="flex flex-col gap-3"> */}
           <div className="flex sm:flex-nowrap flex-wrap gap-3">
             {completedImages > 0 && (
               <Button
                 onClick={handleDownloadAll}
-                disabled={isDownloading}
+                disabled={isDownloading || isZipping}
                 aria-label={isDownloading ? 'Downloading images' : `Download all ${completedImages} images`}
-                aria-disabled={isDownloading}
+                aria-disabled={isDownloading || isZipping}
                 className={cn(
                   buttonStyles.base,
                   buttonStyles.download,
                   'flex-1',
-                  isDownloading && 'opacity-50 cursor-not-allowed pointer-events-none'
+                  (isDownloading || isZipping) && 'opacity-50 cursor-not-allowed pointer-events-none'
                 )}
               >
                 {isDownloading ? (
@@ -445,6 +495,29 @@ export default function Squish() {
                 {isDownloading
                   ? 'Downloading...'
                   : `Download All (${completedImages} ${completedImages === 1 ? 'image' : 'images'})`}
+              </Button>
+            )}
+            {completedImages > 0 && (
+              <Button
+                onClick={handleDownloadZip}
+                disabled={isZipping || isDownloading}
+                aria-label={isZipping ? 'Creating ZIP file' : `Download all ${completedImages} images as ZIP`}
+                aria-disabled={isZipping || isDownloading}
+                className={cn(
+                  buttonStyles.base,
+                  buttonStyles.downloadZip,
+                  'flex-1',
+                  (isZipping || isDownloading) && 'opacity-50 cursor-not-allowed pointer-events-none'
+                )}
+              >
+                {isZipping ? (
+                  <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 animate-spin" />
+                ) : (
+                  <FileArchive className="w-4 h-4 sm:w-5 sm:h-5" />
+                )}
+                {isZipping
+                  ? 'Creating ZIP...'
+                  : `Download ZIP (${completedImages} ${completedImages === 1 ? 'image' : 'images'})`}
               </Button>
             )}
             {images.length > 0 && (
@@ -459,7 +532,7 @@ export default function Squish() {
             )}
           </div>
           {images.length > 0 && (
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {images.map((image) => (
                 <ImageItem
                   key={image.id}
