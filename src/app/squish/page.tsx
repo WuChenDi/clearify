@@ -379,7 +379,7 @@ export default function Squish() {
             </CardTitle>
           </div>
           <p className="mt-2 text-xs sm:text-sm text-muted-foreground">
-            Compress and convert your images in your browser by up to 90% for free. No upload required.
+            Compress images up to 90% while maintaining high quality, completely free and without the need for uploading.
           </p>
         </CardHeader>
         <CardContent className="p-4 sm:p-6 space-y-4 sm:space-y-6">
