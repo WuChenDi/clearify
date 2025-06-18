@@ -7,7 +7,6 @@ import Footer from '@/components/footer'
 import Header from '@/components/header'
 import Aurora from '@/components/reactbits/Aurora'
 import Particles from '@/components/reactbits/Particles'
-import SplashCursor from '@/components/reactbits/SplashCursor'
 
 import { Providers } from './providers'
 import '@/app/globals.css'
@@ -36,7 +35,6 @@ const BackgroundEffects = () => (
         disableRotation={false}
       />
     </div>
-    <SplashCursor />
   </>
 )
 

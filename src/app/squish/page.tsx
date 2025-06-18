@@ -3,6 +3,7 @@
 
 import { Upload, Trash2, Download, Loader2, X, CheckCircle, AlertCircle, ArrowRight } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 import React, { useState, useCallback, useMemo } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { toast } from 'sonner'
@@ -103,15 +104,22 @@ const ImageItem = ({
     )}
   >
     {image.preview && (
-      <div className="relative w-16 h-16 sm:w-20 sm:h-20 overflow-hidden rounded-lg">
-        <Image
-          src={image.preview}
-          alt={image.file.name}
-          width={80}
-          height={80}
-          className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-          unoptimized
-        />
+      <div className="relative w-20 h-20 sm:w-24 sm:h-24 overflow-hidden rounded-xl border border-border/30">
+        <Link
+          href={image.preview}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block w-full h-full"
+        >
+          <Image
+            src={image.preview}
+            alt={image.file.name}
+            width={80}
+            height={80}
+            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+            unoptimized
+          />
+        </Link>
       </div>
     )}
     <div className="flex-1 min-w-0 w-full">

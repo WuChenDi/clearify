@@ -4,6 +4,7 @@ import Link from 'next/link'
 
 import GradientText from '@/components/reactbits/GradientText'
 import ShinyText from '@/components/reactbits/ShinyText'
+import SplashCursor from '@/components/reactbits/SplashCursor'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
@@ -114,6 +115,8 @@ export default function Home() {
           ))}
         </div>
       </div>
+
+      <SplashCursor />
     </div>
   )
 }
