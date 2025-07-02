@@ -422,7 +422,11 @@ export default function Squish() {
   } = useDropzone({
     onDrop,
     accept: {
-      'image/*': ['.jpeg', '.jpg', '.png', '.webp', '.avif', '.jxl']
+      'image/jpeg': ['.jpeg', '.jpg'],
+      'image/png': ['.png'],
+      'image/webp': ['.webp'],
+      'image/avif': ['.avif'],
+      'image/jxl': ['.jxl']
     }
   })
 
