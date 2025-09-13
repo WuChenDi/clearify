@@ -2,10 +2,11 @@
 'use client'
 
 import JSZip from 'jszip'
-import { Upload, Trash2, Download, Loader2, X, CheckCircle, AlertCircle, ArrowRight, FileArchive } from 'lucide-react'
+import { Upload, Trash2, Download, Loader2, X, CheckCircle, AlertCircle, ArrowRight, FileArchive, Eye } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState, useCallback, useMemo } from 'react'
+import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider'
 import { useDropzone } from 'react-dropzone'
 import { toast } from 'sonner'
 
@@ -13,17 +14,9 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Slider } from '@/components/ui/slider'
 import { useImageQueue } from '@/hooks/useImageQueue'
-import { DEFAULT_QUALITY_SETTINGS, downloadImage, formatFileSize, cn } from '@/lib'
+import { DEFAULT_QUALITY_SETTINGS, downloadImage, formatFileSize, cn, sampleImages } from '@/lib'
 import logger from '@/lib/logger'
 import type { ImageFile, OutputType, CompressionOptions as CompressionOptionsType } from '@/types'
-
-// Sample images from Unsplash
-const sampleImages = [
-  'https://res.cloudinary.com/dhzm2rp05/image/upload/samples/logo.jpg',
-  'https://res.cloudinary.com/dhzm2rp05/image/upload/samples/smile.jpg',
-  'https://res.cloudinary.com/dhzm2rp05/image/upload/samples/animals/three-dogs.jpg',
-  'https://res.cloudinary.com/dhzm2rp05/image/upload/live/t7lklpmhyyrk84p5vfqr.jpg'
-]
 
 // Common button styles
 const buttonStyles = {
@@ -86,17 +79,105 @@ const CompressionOptions = ({
   </div>
 )
 
+// Image Comparison Modal Component
+const ImageComparisonModal = ({
+  image,
+  isOpen,
+  onClose
+}: {
+  image: ImageFile
+  isOpen: boolean
+  onClose: () => void
+}) => {
+  if (!isOpen || !image.file || !image.blob) return null
+
+  const originalImageUrl = URL.createObjectURL(image.file)
+  const compressedImageUrl = URL.createObjectURL(image.blob)
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+      <div className="relative w-full max-w-6xl max-h-[90vh] bg-card/95 backdrop-blur-lg rounded-xl border border-border/50 shadow-2xl overflow-hidden">
+        <div className="flex items-center justify-between p-4 border-b border-border/30">
+          <div>
+            <h3 className="text-lg font-semibold text-foreground">
+              Image Comparison
+            </h3>
+            <p className="text-sm text-muted-foreground">{image.file.name}</p>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            className="text-foreground/70 hover:text-foreground hover:bg-background/50"
+          >
+            <X className="w-5 h-5" />
+          </Button>
+        </div>
+        
+        <div className="p-4">
+          <div className="mb-4 flex flex-wrap gap-4 text-sm">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-blue-500 rounded"></div>
+              <span>Original ({formatFileSize(image.originalSize)})</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-green-500 rounded"></div>
+              <span>
+                Compressed ({formatFileSize(image.compressedSize || 0)})
+                {image.compressedSize && (
+                  <span className="ml-1 text-green-400 font-medium">
+                    (-{Math.round(((image.originalSize - image.compressedSize) / image.originalSize) * 100)}%)
+                  </span>
+                )}
+              </span>
+            </div>
+          </div>
+          
+          <div className="relative aspect-video w-full max-h-[60vh] overflow-hidden rounded-lg border border-border/30">
+            <ReactCompareSlider
+              itemOne={
+                <ReactCompareSliderImage
+                  src={originalImageUrl}
+                  alt="Original image"
+                  style={{ objectFit: 'contain' }}
+                />
+              }
+              itemTwo={
+                <ReactCompareSliderImage
+                  src={compressedImageUrl}
+                  alt="Compressed image"
+                  style={{ objectFit: 'contain' }}
+                />
+              }
+              position={50}
+              style={{ height: '100%' }}
+            />
+          </div>
+          
+          <div className="mt-4 text-center">
+            <p className="text-xs text-muted-foreground">
+              Drag the slider to compare original (left) vs compressed (right)
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // Image Item Component
 const ImageItem = ({
   image,
   onRemove,
   onDownload,
-  onRetry
+  onRetry,
+  onCompare
 }: {
   image: ImageFile
   onRemove: (id: string) => void
   onDownload: (image: ImageFile) => void
   onRetry: (id: string) => void
+  onCompare: (image: ImageFile) => void
 }) => (
   <div
     className={cn(
@@ -127,6 +208,17 @@ const ImageItem = ({
       )}
 
       <div className="flex items-center gap-1 ml-auto">
+        {image.status === 'complete' && image.blob && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => onCompare(image)}
+            className="text-foreground/70 hover:text-yellow-400 hover:bg-yellow-500/20 rounded-lg w-8 h-8 transition-all duration-200 hover:scale-105"
+            title="Compare Original vs Compressed"
+          >
+            <Eye className="w-4 h-4" />
+          </Button>
+        )}
         {image.status === 'complete' && (
           <Button
             variant="ghost"
@@ -225,7 +317,6 @@ const SampleImages = ({ onSampleImageClick }: { onSampleImageClick: (url: string
   <div className="mt-4 sm:mt-6">
     <h3 className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-4">
       Try Sample Images
-      Images:
     </h3>
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-4">
       {sampleImages.map((url, index) => (
@@ -256,6 +347,7 @@ export default function Squish() {
   })
   const [isDownloading, setIsDownloading] = useState(false)
   const [isZipping, setIsZipping] = useState(false)
+  const [compareImage, setCompareImage] = useState<ImageFile | null>(null)
 
   const { addToQueue } = useImageQueue(options, outputType, setImages)
 
@@ -359,6 +451,11 @@ export default function Squish() {
     setImages([])
     toast.success('All images cleared')
   }, [images])
+
+  // Handle comparing images
+  const handleCompareImage = (image: ImageFile) => {
+    setCompareImage(image)
+  }
 
   // Handle downloading all completed images
   const handleDownloadAll = useCallback(async () => {
@@ -544,6 +641,7 @@ export default function Squish() {
                   onRemove={handleRemoveImage}
                   onDownload={downloadImage}
                   onRetry={handleRetryImage}
+                  onCompare={handleCompareImage}
                 />
               ))}
             </div>
@@ -551,6 +649,14 @@ export default function Squish() {
           {images.length === 0 && <SampleImages onSampleImageClick={handleSampleImageClick} />}
         </CardContent>
       </Card>
+
+      {compareImage && (
+        <ImageComparisonModal
+          image={compareImage}
+          isOpen={!!compareImage}
+          onClose={() => setCompareImage(null)}
+        />
+      )}
     </div>
   )
 }

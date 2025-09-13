@@ -10,10 +10,9 @@ import { Images } from '@/components/bg/Images'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
-import { cn } from '@/lib'
+import { cn, sampleImages } from '@/lib'
 import logger from '@/lib/logger'
 import { processImages, initializeModel, getModelInfo } from '@/lib/process'
-
 
 interface BgError {
   message: string;
@@ -30,14 +29,6 @@ type RemovalModel = 'briaai/RMBG-1.4' | 'wuchendi/MODNet' | 'briaai/RMBG-2.0';
 
 // Define model status type
 type ModelStatus = 'ready' | 'unavailable' | 'loading';
-
-// Sample images from Unsplash
-const sampleImages = [
-  'https://res.cloudinary.com/dhzm2rp05/image/upload/samples/logo.jpg',
-  'https://res.cloudinary.com/dhzm2rp05/image/upload/samples/smile.jpg',
-  'https://res.cloudinary.com/dhzm2rp05/image/upload/samples/animals/three-dogs.jpg',
-  'https://res.cloudinary.com/dhzm2rp05/image/upload/live/t7lklpmhyyrk84p5vfqr.jpg'
-]
 
 export default function BG() {
   const [isLoading, setIsLoading] = useState(true)
