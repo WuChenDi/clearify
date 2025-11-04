@@ -45,8 +45,8 @@ export default function Compress() {
 
       const ffmpeg = ffmpegRef.current
       if (!ffmpeg.loaded) {
-        ffmpeg.on('log', ({ message }) => {
-          logger.log('[FFmpeg Log]', message)
+        ffmpeg.on('log', ({ type, message }) => {
+          logger.log(`[FFmpeg Log] [${type}]`, message)
         })
         await ffmpeg.load({
           coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
@@ -141,11 +141,12 @@ export default function Compress() {
 
       await ffmpeg.exec(args)
       const outputData = await ffmpeg.readFile('output.mp4')
-      const url = URL.createObjectURL(new Blob([outputData], { type: 'video/mp4' }))
+      const blob = new Blob([outputData as BlobPart], { type: 'video/mp4' })
+      const url = URL.createObjectURL(blob)
 
       setOutputUrl(url)
       setProgress(100)
-      setProcessedSize(outputData.length)
+      setProcessedSize((outputData as Uint8Array).length)
       toast.success('Video compressed successfully')
 
       await ffmpeg.deleteFile('input.mp4')
