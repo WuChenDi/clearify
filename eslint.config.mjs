@@ -1,21 +1,25 @@
-import { dirname } from 'path'
-import { fileURLToPath } from 'url'
+import { defineConfig, globalIgnores } from 'eslint/config'
+import nextVitals from 'eslint-config-next/core-web-vitals'
+import nextTs from 'eslint-config-next/typescript'
 
-import { FlatCompat } from '@eslint/eslintrc'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname
-})
-
-/** @type {import('eslint').Linter.FlatConfig[]} */
-const eslintConfig = [
-  {
-    ignores: ['.next/*', 'node_modules/*', 'src/components/ui/*', 'src/components/reactbits/*']
-  },
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
+const eslintConfig = defineConfig([
+  ...nextVitals,
+  ...nextTs,
+  
+  // Override default ignores of eslint-config-next.
+  globalIgnores([
+    // Default ignores of eslint-config-next:
+    '.next/**',
+    'out/**',
+    'build/**',
+    'next-env.d.ts',
+    // Additional ignores:
+    'node_modules/**',
+    'src/components/ui/**',
+    'src/components/reactbits/**'
+  ]),
+  
+  // Custom rules
   {
     rules: {
       'semi': ['error', 'never'],
@@ -56,6 +60,6 @@ const eslintConfig = [
       ]
     }
   }
-]
+])
 
 export default eslintConfig
