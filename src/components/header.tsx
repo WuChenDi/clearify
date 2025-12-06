@@ -25,7 +25,7 @@ export default function Header() {
                 return (
                   <span
                     key={index}
-                    className='hover:text-fun-pink hover:-mt-2 transition-all duration-500 hover:duration-100 click:goodbyeLetterAnim text-white font-medium'
+                    className="hover:text-fun-pink hover:-mt-2 transition-all duration-500 hover:duration-100 click:goodbyeLetterAnim text-white font-medium"
                   >
                     {letter}
                   </span>
@@ -36,7 +36,10 @@ export default function Header() {
 
           <div className="flex items-center gap-6">
             <nav className="hidden md:flex items-center gap-6">
-              <Link href="https://notes-wudi.pages.dev/projects/" className="text-white hover:text-gray-200 transition-colors flex items-center gap-1 uppercase">
+              <Link
+                href="https://notes-wudi.pages.dev/projects/"
+                className="text-white hover:text-gray-200 transition-colors flex items-center gap-1 uppercase"
+              >
                 more
                 <ExternalLinkIcon className="w-4 h-4" />
               </Link>
@@ -44,12 +47,7 @@ export default function Header() {
 
             <div className="flex items-center gap-2">
               <ThemeToggle />
-              <Button
-                asChild
-                variant="outline"
-                size="icon"
-                aria-label="GitHub"
-              >
+              <Button asChild variant="outline" size="icon" aria-label="GitHub">
                 <Link
                   href="https://github.com/WuChenDi/clearify"
                   target="_blank"

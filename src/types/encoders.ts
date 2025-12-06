@@ -1,16 +1,16 @@
 export interface AvifEncodeOptions {
-  quality?: number;
-  effort?: number;
+  quality?: number
+  effort?: number
 }
 
 export interface JpegEncodeOptions {
-  quality?: number;
+  quality?: number
 }
 
 export interface JxlEncodeOptions {
-  quality?: number;
+  quality?: number
 }
 
 export interface WebpEncodeOptions {
-  quality?: number;
+  quality?: number
 }

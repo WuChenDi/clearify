@@ -7,13 +7,13 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'res.cloudinary.com'
+        hostname: 'res.cloudinary.com',
       },
       {
         protocol: 'https',
-        hostname: 'notes-wudi.pages.dev'
-      }
-    ]
+        hostname: 'notes-wudi.pages.dev',
+      },
+    ],
   },
   webpack: (config) => {
     // webpack: (config, { isServer }) => {
@@ -39,11 +39,11 @@ const nextConfig: NextConfig = {
       loader: 'worker-loader',
       options: {
         filename: 'static/[name].[hash].js',
-        publicPath: '/_next/'
-      }
+        publicPath: '/_next/',
+      },
     })
     return config
-  }
+  },
 }
 
 export default nextConfig

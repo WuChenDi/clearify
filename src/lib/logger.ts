@@ -31,7 +31,7 @@ const logger = {
   info: infoWithTimestamp,
   warn: warnWithTimestamp,
   error: errorWithTimestamp,
-  debug: debugWithTimestamp
+  debug: debugWithTimestamp,
 }
 
 export default logger

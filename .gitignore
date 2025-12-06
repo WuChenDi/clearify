@@ -156,3 +156,6 @@ dist
 
 # End of https://www.toptal.com/developers/gitignore/api/node
 .user.ini
+
+collect_files.sh
+files_summary.md

@@ -9,33 +9,40 @@ import { toast } from 'sonner'
 import { Images } from '@/components/bg/Images'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select'
 import { cn, sampleImages } from '@/lib'
 import logger from '@/lib/logger'
 import { processImages, initializeModel, getModelInfo } from '@/lib/process'
 
 interface BgError {
-  message: string;
+  message: string
 }
 
 export interface ImageFile {
-  id: number;
-  file: File;
-  processedFile?: File;
+  id: number
+  file: File
+  processedFile?: File
 }
 
 // Define the model type to improve type safety
-type RemovalModel = 'briaai/RMBG-1.4' | 'wuchendi/MODNet' | 'briaai/RMBG-2.0';
+type RemovalModel = 'briaai/RMBG-1.4' | 'wuchendi/MODNet' | 'briaai/RMBG-2.0'
 
 // Define model status type
-type ModelStatus = 'ready' | 'unavailable' | 'loading';
+type ModelStatus = 'ready' | 'unavailable' | 'loading'
 
 export default function BG() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<BgError | null>(null)
   const [isWebGPU, setIsWebGPU] = useState(false)
   const [isIOS, setIsIOS] = useState(false)
-  const [currentModel, setCurrentModel] = useState<RemovalModel>('wuchendi/MODNet')
+  const [currentModel, setCurrentModel] =
+    useState<RemovalModel>('wuchendi/MODNet')
   const [isModelSwitching, setIsModelSwitching] = useState(false)
   const [images, setImages] = useState<ImageFile[]>([])
   const [modelStatus, setModelStatus] = useState<ModelStatus>('loading')
@@ -45,7 +52,7 @@ export default function BG() {
     const { isIOS: isIOSDevice, isWebGPUSupported } = getModelInfo()
     setIsIOS(isIOSDevice)
     setIsWebGPU(isWebGPUSupported)
-    
+
     // Attempt to initialize MODNet first
     const initModel = async () => {
       setIsLoading(true)
@@ -71,20 +78,29 @@ export default function BG() {
           toast.success('RMBG-2.0 model loaded successfully')
         } catch (fallbackErr) {
           try {
-            const finalFallbackInitialized = await initializeModel('briaai/RMBG-1.4')
+            const finalFallbackInitialized =
+              await initializeModel('briaai/RMBG-1.4')
             if (!finalFallbackInitialized) {
               throw new Error('Failed to initialize RMBG-1.4 model')
             }
             setCurrentModel('briaai/RMBG-1.4')
             setModelStatus('unavailable')
-            setError({ message: 'MODNet and RMBG-2.0 not supported, switched to RMBG-1.4' })
+            setError({
+              message:
+                'MODNet and RMBG-2.0 not supported, switched to RMBG-1.4',
+            })
             toast.info('Switched to RMBG-1.4 as fallback')
           } catch (finalErr) {
             setError({
-              message: finalErr instanceof Error ? finalErr.message : 'Failed to load any model'
+              message:
+                finalErr instanceof Error
+                  ? finalErr.message
+                  : 'Failed to load any model',
             })
             setModelStatus('unavailable')
-            toast.error(`Model loading failed: ${finalErr instanceof Error ? finalErr.message : 'Unknown error'}`)
+            toast.error(
+              `Model loading failed: ${finalErr instanceof Error ? finalErr.message : 'Unknown error'}`,
+            )
           }
         }
       } finally {
@@ -115,10 +131,13 @@ export default function BG() {
         toast.info('MODNet not supported, switched to RMBG-1.4')
       } else {
         setError({
-          message: err instanceof Error ? err.message : 'Failed to switch models'
+          message:
+            err instanceof Error ? err.message : 'Failed to switch models',
         })
         setModelStatus('unavailable')
-        toast.error(`Model switch failed: ${err instanceof Error ? err.message : 'Unknown error'}`)
+        toast.error(
+          `Model switch failed: ${err instanceof Error ? err.message : 'Unknown error'}`,
+        )
       }
     } finally {
       setIsModelSwitching(false)
@@ -129,25 +148,27 @@ export default function BG() {
     const newImages = acceptedFiles.map((file, index) => ({
       id: Date.now() + index,
       file,
-      processedFile: undefined
+      processedFile: undefined,
     }))
-    setImages(prev => [...prev, ...newImages])
+    setImages((prev) => [...prev, ...newImages])
     toast.info(`Processing ${acceptedFiles.length} image(s)...`)
-    
+
     for (const image of newImages) {
       try {
         const result = await processImages([image.file])
         if (result && result.length > 0) {
-          setImages(prev => prev.map(img =>
-            img.id === image.id
-              ? { ...img, processedFile: result[0] }
-              : img
-          ))
+          setImages((prev) =>
+            prev.map((img) =>
+              img.id === image.id ? { ...img, processedFile: result[0] } : img,
+            ),
+          )
           toast.success('Image processed successfully')
         }
       } catch (error) {
         logger.error('Error processing image:', error)
-        toast.error(`Processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+        toast.error(
+          `Processing failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        )
       }
     }
   }, [])
@@ -166,7 +187,7 @@ export default function BG() {
     if (imageFiles.length > 0) {
       onDrop(imageFiles)
     }
-  }  
+  }
 
   const handleSampleImageClick = async (url: string) => {
     try {
@@ -176,8 +197,8 @@ export default function BG() {
         method: 'GET',
         mode: 'cors',
         headers: {
-          'Accept': 'image/jpeg, image/png'
-        }
+          Accept: 'image/jpeg, image/png',
+        },
       })
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
@@ -192,7 +213,9 @@ export default function BG() {
       onDrop([file])
     } catch (error) {
       logger.error('Error loading sample image:', error)
-      toast.error(`Failed to load sample image: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      toast.error(
+        `Failed to load sample image: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      )
     }
   }
 
@@ -206,14 +229,14 @@ export default function BG() {
     getInputProps,
     isDragActive,
     isDragAccept,
-    isDragReject
+    isDragReject,
   } = useDropzone({
     onDrop,
     accept: {
       'image/jpeg': ['.jpeg', '.jpg'],
       'image/png': ['.png'],
-      'image/webp': ['.webp']
-    }
+      'image/webp': ['.webp'],
+    },
   })
 
   return (
@@ -227,39 +250,62 @@ export default function BG() {
             {!isIOS && (
               <div className="flex flex-col items-start gap-2 w-full md:w-auto">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-muted-foreground">Select Model:</span>
+                  <span className="text-sm text-muted-foreground">
+                    Select Model:
+                  </span>
                   {currentModel === 'wuchendi/MODNet' && (
-                    <div className={cn(
-                      'flex items-center gap-1 px-2 py-1 rounded-full text-sm',
-                      {
-                        'bg-green-500/20 text-green-400': modelStatus === 'ready',
-                        'bg-yellow-500/20 text-yellow-400': modelStatus === 'unavailable',
-                        'bg-blue-500/20 text-blue-400': modelStatus === 'loading'
-                      }
-                    )}>
-                      {modelStatus === 'ready' && <CheckCircle className="w-4 h-4" />}
-                      {modelStatus === 'unavailable' && <XCircle className="w-4 h-4" />}
+                    <div
+                      className={cn(
+                        'flex items-center gap-1 px-2 py-1 rounded-full text-sm',
+                        {
+                          'bg-green-500/20 text-green-400':
+                            modelStatus === 'ready',
+                          'bg-yellow-500/20 text-yellow-400':
+                            modelStatus === 'unavailable',
+                          'bg-blue-500/20 text-blue-400':
+                            modelStatus === 'loading',
+                        },
+                      )}
+                    >
+                      {modelStatus === 'ready' && (
+                        <CheckCircle className="w-4 h-4" />
+                      )}
+                      {modelStatus === 'unavailable' && (
+                        <XCircle className="w-4 h-4" />
+                      )}
                       {modelStatus === 'loading' && (
                         <div className="inline-block animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-blue-400"></div>
                       )}
                       <span>
-                        {modelStatus === 'ready' ? 'Ready' : modelStatus === 'unavailable' ? 'Unavailable' : 'Loading'}
+                        {modelStatus === 'ready'
+                          ? 'Ready'
+                          : modelStatus === 'unavailable'
+                            ? 'Unavailable'
+                            : 'Loading'}
                       </span>
                     </div>
                   )}
                 </div>
-                <Select 
-                  value={currentModel} 
-                  onValueChange={(value: RemovalModel) => handleModelChange(value)}
+                <Select
+                  value={currentModel}
+                  onValueChange={(value: RemovalModel) =>
+                    handleModelChange(value)
+                  }
                   disabled={isLoading || isModelSwitching}
                 >
                   <SelectTrigger className="bg-card/50 border border-border w-full md:w-[220px] rounded-md p-2 focus:ring-2 focus:ring-blue-400">
                     <SelectValue placeholder="Select a model" />
                   </SelectTrigger>
                   <SelectContent className="border-border bg-popover/90 rounded-md">
-                    <SelectItem value="wuchendi/MODNet">MODNet (WebGPU)</SelectItem>
-                    <SelectItem value="briaai/RMBG-2.0">RMBG-2.0 (Advanced)</SelectItem>
-                    <SelectItem value="briaai/RMBG-1.4">RMBG-1.4 (Cross-browser)</SelectItem>
+                    <SelectItem value="wuchendi/MODNet">
+                      MODNet (WebGPU)
+                    </SelectItem>
+                    <SelectItem value="briaai/RMBG-2.0">
+                      RMBG-2.0 (Advanced)
+                    </SelectItem>
+                    <SelectItem value="briaai/RMBG-1.4">
+                      RMBG-1.4 (Cross-browser)
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -273,7 +319,7 @@ export default function BG() {
         </CardHeader>
         <CardContent className="p-6">
           <div className="relative space-y-6">
-            <div 
+            <div
               {...getRootProps()}
               className={cn(
                 'p-10 border-2 border-dashed rounded-xl text-center cursor-pointer transition-all duration-300',
@@ -283,46 +329,59 @@ export default function BG() {
                   'border-green-500/70 bg-green-500/10': isDragAccept,
                   'border-red-500/70 bg-red-500/10': isDragReject,
                   'border-blue-500/70 bg-blue-500/10': isDragActive,
-                  'border-white/[0.1]': !isDragActive && !isDragAccept && !isDragReject,
-                  'cursor-not-allowed opacity-60': isLoading || isModelSwitching
-                }
+                  'border-white/[0.1]':
+                    !isDragActive && !isDragAccept && !isDragReject,
+                  'cursor-not-allowed opacity-60':
+                    isLoading || isModelSwitching,
+                },
               )}
             >
-              <input {...getInputProps()} className="hidden" disabled={isLoading || isModelSwitching} />
+              <input
+                {...getInputProps()}
+                className="hidden"
+                disabled={isLoading || isModelSwitching}
+              />
               <div className="flex flex-col items-center gap-3">
                 {isLoading || isModelSwitching ? (
                   <>
                     <div className="inline-block animate-spin rounded-full h-14 w-14 border-t-2 border-b-2 border-blue-400 mb-3"></div>
                     <p className="text-xl text-foreground/90">
-                      {isModelSwitching ? 'Switching models...' : 'Loading background removal model...'}
+                      {isModelSwitching
+                        ? 'Switching models...'
+                        : 'Loading background removal model...'}
                     </p>
                   </>
                 ) : error ? (
                   <>
                     <AlertTriangle className="w-14 h-14 text-red-500" />
-                    <p className="text-lg text-red-500 font-medium mb-3">{error.message}</p>
-                    {currentModel === 'wuchendi/MODNet' && error.message.includes('MODNet not supported') && (
-                      <Button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleModelChange('briaai/RMBG-2.0')
-                        }}
-                        className="bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600 hover:to-purple-600 border-none rounded-md px-4 py-2"
-                      >
-                        Switch to RMBG-2.0
-                      </Button>
-                    )}
-                    {(currentModel === 'briaai/RMBG-2.0' || currentModel === 'wuchendi/MODNet') && error.message.includes('not supported') && (
-                      <Button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleModelChange('briaai/RMBG-1.4')
-                        }}
-                        className="bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600 hover:to-purple-600 border-none rounded-md px-4 py-2 mt-2"
-                      >
-                        Switch to RMBG-1.4
-                      </Button>
-                    )}
+                    <p className="text-lg text-red-500 font-medium mb-3">
+                      {error.message}
+                    </p>
+                    {currentModel === 'wuchendi/MODNet' &&
+                      error.message.includes('MODNet not supported') && (
+                        <Button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleModelChange('briaai/RMBG-2.0')
+                          }}
+                          className="bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600 hover:to-purple-600 border-none rounded-md px-4 py-2"
+                        >
+                          Switch to RMBG-2.0
+                        </Button>
+                      )}
+                    {(currentModel === 'briaai/RMBG-2.0' ||
+                      currentModel === 'wuchendi/MODNet') &&
+                      error.message.includes('not supported') && (
+                        <Button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleModelChange('briaai/RMBG-1.4')
+                          }}
+                          className="bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600 hover:to-purple-600 border-none rounded-md px-4 py-2 mt-2"
+                        >
+                          Switch to RMBG-1.4
+                        </Button>
+                      )}
                   </>
                 ) : (
                   <>
@@ -332,16 +391,18 @@ export default function BG() {
                         ? 'Drop your images here...'
                         : 'Drag and drop images here'}
                     </p>
-                    <p className="text-sm text-muted-foreground">or click to select files (JPEG, PNG, WEBP)</p>
+                    <p className="text-sm text-muted-foreground">
+                      or click to select files (JPEG, PNG, WEBP)
+                    </p>
                   </>
                 )}
               </div>
             </div>
 
             {images.length > 0 && (
-              <Button 
-                variant="destructive" 
-                onClick={handleClearAllImages} 
+              <Button
+                variant="destructive"
+                onClick={handleClearAllImages}
                 className="w-full bg-gradient-to-r from-red-500/80 to-orange-500/80 hover:from-red-600 hover:to-orange-600 border-none rounded-md py-2"
               >
                 Clear All Images
@@ -366,7 +427,11 @@ export default function BG() {
                         width={288}
                         height={288}
                         className="object-cover"
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                        }}
                       />
                     </button>
                   ))}
@@ -374,7 +439,12 @@ export default function BG() {
               </div>
             )}
 
-            <Images images={images} onDelete={(id) => setImages(prev => prev.filter(img => img.id !== id))} />
+            <Images
+              images={images}
+              onDelete={(id) =>
+                setImages((prev) => prev.filter((img) => img.id !== id))
+              }
+            />
           </div>
         </CardContent>
       </Card>

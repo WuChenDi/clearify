@@ -5,10 +5,19 @@ import * as png from '@jsquash/png'
 import * as webp from '@jsquash/webp'
 
 import { ensureWasmLoaded } from '@/lib'
-import type { OutputType, CompressionOptions, AvifEncodeOptions, JpegEncodeOptions, JxlEncodeOptions, WebpEncodeOptions } from '@/types'
+import type {
+  OutputType,
+  CompressionOptions,
+  AvifEncodeOptions,
+  JpegEncodeOptions,
+  JxlEncodeOptions,
+  WebpEncodeOptions,
+} from '@/types'
 
-
-export async function decode(sourceType: string, fileBuffer: ArrayBuffer): Promise<ImageData> {
+export async function decode(
+  sourceType: string,
+  fileBuffer: ArrayBuffer,
+): Promise<ImageData> {
   // Ensure WASM is loaded for the source type
   await ensureWasmLoaded(sourceType as OutputType)
 
@@ -36,7 +45,11 @@ export async function decode(sourceType: string, fileBuffer: ArrayBuffer): Promi
   }
 }
 
-export async function encode(outputType: OutputType, imageData: ImageData, options: CompressionOptions): Promise<ArrayBuffer> {
+export async function encode(
+  outputType: OutputType,
+  imageData: ImageData,
+  options: CompressionOptions,
+): Promise<ArrayBuffer> {
   // Ensure WASM is loaded for the output type
   await ensureWasmLoaded(outputType)
 
@@ -45,19 +58,19 @@ export async function encode(outputType: OutputType, imageData: ImageData, optio
       case 'avif': {
         const avifOptions: AvifEncodeOptions = {
           quality: options.quality,
-          effort: 4 // Medium encoding effort
+          effort: 4, // Medium encoding effort
         }
         return await avif.encode(imageData, avifOptions)
       }
       case 'jpeg': {
         const jpegOptions: JpegEncodeOptions = {
-          quality: options.quality
+          quality: options.quality,
         }
         return await jpeg.encode(imageData, jpegOptions)
       }
       case 'jxl': {
         const jxlOptions: JxlEncodeOptions = {
-          quality: options.quality
+          quality: options.quality,
         }
         return await jxl.encode(imageData, jxlOptions)
       }
@@ -65,7 +78,7 @@ export async function encode(outputType: OutputType, imageData: ImageData, optio
         return await png.encode(imageData)
       case 'webp': {
         const webpOptions: WebpEncodeOptions = {
-          quality: options.quality
+          quality: options.quality,
         }
         return await webp.encode(imageData, webpOptions)
       }

@@ -62,22 +62,22 @@ export const metadata: Metadata = {
     'reduce file size',
     'browser-based tools',
     'privacy-focused image editor',
-    'no upload image tools'
+    'no upload image tools',
   ],
   referrer: 'no-referrer-when-downgrade',
   authors: [{ name: 'wudi', url: 'https://github.com/WuChenDi' }],
   creator: 'wudi',
   publisher: 'Clearify',
-  robots: { 
-    index: true, 
+  robots: {
+    index: true,
     follow: true,
     'max-snippet': -1,
     'max-image-preview': 'large',
-    'max-video-preview': -1
+    'max-video-preview': -1,
   },
   metadataBase: new URL('https://clearify.pages.dev/'),
   alternates: {
-    canonical: '/'
+    canonical: '/',
   },
   applicationName: 'Clearify',
   category: 'Image Editing Tools, AI Tools, Multimedia',
@@ -92,28 +92,31 @@ export const metadata: Metadata = {
         url: 'https://cdn.jsdelivr.net/gh/cdLab996/picture-lib/wudi/Clearify/index.png',
         width: 1200,
         height: 630,
-        alt: 'Clearify - AI Image Editing Tools Interface'
-      }
+        alt: 'Clearify - AI Image Editing Tools Interface',
+      },
     ],
     locale: 'en_US',
     type: 'website',
-    countryName: 'Global'
+    countryName: 'Global',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Clearify - AI-Powered Image Editing Tools',
-    description: 'Remove backgrounds, compress images and videos with AI. All processing happens locally in your browser.',
-    images: ['https://cdn.jsdelivr.net/gh/cdLab996/picture-lib/wudi/Clearify/index.png'],
+    description:
+      'Remove backgrounds, compress images and videos with AI. All processing happens locally in your browser.',
+    images: [
+      'https://cdn.jsdelivr.net/gh/cdLab996/picture-lib/wudi/Clearify/index.png',
+    ],
     site: '@wuchendi96',
-    creator: '@wuchendi96'
+    creator: '@wuchendi96',
   },
   other: {
     'revisit-after': '7 days',
-    'distribution': 'global',
-    'rating': 'general',
-    'copyright': '© 2025 wudi. All rights reserved.',
-    'language': 'en',
-  }
+    distribution: 'global',
+    rating: 'general',
+    copyright: '© 2025 wudi. All rights reserved.',
+    language: 'en',
+  },
 }
 
 // JSON-LD Structured Data - WebSite
@@ -122,13 +125,14 @@ const websiteSchema = {
   '@type': 'WebSite',
   name: 'Clearify',
   url: 'https://clearify.pages.dev/',
-  description: 'Powerful web-based AI tools for image editing. Remove backgrounds, compress images and videos.',
+  description:
+    'Powerful web-based AI tools for image editing. Remove backgrounds, compress images and videos.',
   inLanguage: 'en-US',
   potentialAction: {
     '@type': 'SearchAction',
     target: 'https://clearify.pages.dev/?q={search_term_string}',
-    'query-input': 'required name=search_term_string'
-  }
+    'query-input': 'required name=search_term_string',
+  },
 }
 
 // JSON-LD Structured Data - WebApplication
@@ -136,36 +140,41 @@ const webApplicationSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebApplication',
   name: 'Clearify',
-  description: 'AI-powered image editing tools including background removal, image compression, and video compression. All processing happens locally in your browser for maximum privacy.',
+  description:
+    'AI-powered image editing tools including background removal, image compression, and video compression. All processing happens locally in your browser for maximum privacy.',
   url: 'https://clearify.pages.dev/',
   applicationCategory: 'MultimediaApplication',
   operatingSystem: 'Web',
-  browserRequirements: 'Requires JavaScript. Compatible with Chrome 90+, Firefox 88+, Safari 14+, Edge 90+',
+  browserRequirements:
+    'Requires JavaScript. Compatible with Chrome 90+, Firefox 88+, Safari 14+, Edge 90+',
   offers: {
     '@type': 'Offer',
     price: '0',
     priceCurrency: 'USD',
-    availability: 'https://schema.org/InStock'
+    availability: 'https://schema.org/InStock',
   },
   author: {
     '@type': 'Person',
     name: 'wudi',
-    url: 'https://github.com/WuChenDi'
+    url: 'https://github.com/WuChenDi',
   },
   publisher: {
     '@type': 'Organization',
     name: 'Clearify',
-    url: 'https://clearify.pages.dev/'
+    url: 'https://clearify.pages.dev/',
   },
   datePublished: '2024-01-01',
   dateModified: '2025-11-04',
   inLanguage: 'en-US',
   isAccessibleForFree: true,
-  keywords: 'AI image editing, background removal, image compression, video compression, browser-based tools, privacy-focused',
+  keywords:
+    'AI image editing, background removal, image compression, video compression, browser-based tools, privacy-focused',
   screenshot: {
     '@type': 'ImageObject',
-    contentUrl: 'https://cdn.jsdelivr.net/gh/cdLab996/picture-lib/wudi/Clearify/index.png',
-    description: 'Clearify interface screenshot showing AI-powered image editing tools'
+    contentUrl:
+      'https://cdn.jsdelivr.net/gh/cdLab996/picture-lib/wudi/Clearify/index.png',
+    description:
+      'Clearify interface screenshot showing AI-powered image editing tools',
   },
   softwareVersion: '1.0.0',
   aggregateRating: {
@@ -173,7 +182,7 @@ const webApplicationSchema = {
     ratingValue: '4.9',
     ratingCount: '150',
     bestRating: '5',
-    worstRating: '1'
+    worstRating: '1',
   },
   featureList: [
     'AI-powered background removal',
@@ -183,17 +192,14 @@ const webApplicationSchema = {
     'Support for JPEG, PNG, WebP formats',
     'Privacy-focused - all data stays on your device',
     'Free to use, no registration required',
-    'Responsive design for all devices'
+    'Responsive design for all devices',
   ],
   interactionStatistic: {
     '@type': 'InteractionCounter',
     interactionType: { '@type': 'http://schema.org/ViewAction' },
-    userInteractionCount: 5000
+    userInteractionCount: 5000,
   },
-  sameAs: [
-    'https://github.com/WuChenDi',
-    'https://x.com/wuchendi96'
-  ]
+  sameAs: ['https://github.com/WuChenDi', 'https://x.com/wuchendi96'],
 }
 
 // JSON-LD Structured Data - SoftwareApplication
@@ -204,25 +210,31 @@ const softwareApplicationSchema = {
   applicationCategory: 'MultimediaApplication',
   offers: {
     '@type': 'Offer',
-    price: '0'
+    price: '0',
   },
   operatingSystem: 'Any',
-  permissions: 'Browser access only'
+  permissions: 'Browser access only',
 }
 
 // JSON-LD Structured Data - BreadcrumbList
 const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
-  itemListElement: [{
-    '@type': 'ListItem',
-    position: 1,
-    name: 'Home',
-    item: 'https://clearify.pages.dev/'
-  }]
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Home',
+      item: 'https://clearify.pages.dev/',
+    },
+  ],
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="en">
       <head>
@@ -235,13 +247,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* JSON-LD Structured Data - WebApplication */}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(webApplicationSchema) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(webApplicationSchema),
+          }}
         />
 
         {/* JSON-LD Structured Data - SoftwareApplication */}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareApplicationSchema) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(softwareApplicationSchema),
+          }}
         />
 
         {/* JSON-LD Structured Data - BreadcrumbList */}
@@ -259,11 +275,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {children}
             </div>
             <Footer />
-            <Toaster 
-              richColors
-              position="top-right"
-              duration={3000}
-            />
+            <Toaster richColors position="top-right" duration={3000} />
           </main>
         </Providers>
       </body>

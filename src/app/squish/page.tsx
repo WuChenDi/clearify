@@ -2,11 +2,25 @@
 'use client'
 
 import JSZip from 'jszip'
-import { Upload, Trash2, Download, Loader2, X, CheckCircle, AlertCircle, ArrowRight, FileArchive, Eye } from 'lucide-react'
+import {
+  Upload,
+  Trash2,
+  Download,
+  Loader2,
+  X,
+  CheckCircle,
+  AlertCircle,
+  ArrowRight,
+  FileArchive,
+  Eye,
+} from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState, useCallback, useMemo } from 'react'
-import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider'
+import {
+  ReactCompareSlider,
+  ReactCompareSliderImage,
+} from 'react-compare-slider'
 import { useDropzone } from 'react-dropzone'
 import { toast } from 'sonner'
 
@@ -14,18 +28,33 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Slider } from '@/components/ui/slider'
 import { useImageQueue } from '@/hooks/useImageQueue'
-import { DEFAULT_QUALITY_SETTINGS, downloadImage, formatFileSize, cn, sampleImages } from '@/lib'
+import {
+  DEFAULT_QUALITY_SETTINGS,
+  downloadImage,
+  formatFileSize,
+  cn,
+  sampleImages,
+} from '@/lib'
 import logger from '@/lib/logger'
-import type { ImageFile, OutputType, CompressionOptions as CompressionOptionsType } from '@/types'
+import type {
+  ImageFile,
+  OutputType,
+  CompressionOptions as CompressionOptionsType,
+} from '@/types'
 
 // Common button styles
 const buttonStyles = {
   base: 'rounded-lg px-4 py-2 transition-all duration-300 shadow-sm focus:ring-2 focus:ring-offset-1 cursor-pointer text-sm sm:text-base',
-  download: 'bg-gradient-to-r from-green-500/80 to-teal-500/80 text-white hover:from-green-600 hover:to-teal-600 focus:ring-green-400',
-  downloadZip: 'bg-gradient-to-r from-purple-500/80 to-indigo-500/80 text-white hover:from-purple-600 hover:to-indigo-600 focus:ring-purple-400',
-  clear: 'bg-gradient-to-r from-red-500/80 to-orange-500/80 text-white hover:from-red-600 hover:to-orange-600 focus:ring-red-400',
-  format: 'bg-[#1a1b2e]/40 text-foreground/80 hover:bg-blue-500/20 hover:text-blue-400 border border-border/30',
-  formatActive: 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-sm'
+  download:
+    'bg-gradient-to-r from-green-500/80 to-teal-500/80 text-white hover:from-green-600 hover:to-teal-600 focus:ring-green-400',
+  downloadZip:
+    'bg-gradient-to-r from-purple-500/80 to-indigo-500/80 text-white hover:from-purple-600 hover:to-indigo-600 focus:ring-purple-400',
+  clear:
+    'bg-gradient-to-r from-red-500/80 to-orange-500/80 text-white hover:from-red-600 hover:to-orange-600 focus:ring-red-400',
+  format:
+    'bg-[#1a1b2e]/40 text-foreground/80 hover:bg-blue-500/20 hover:text-blue-400 border border-border/30',
+  formatActive:
+    'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-sm',
 }
 
 // Compression Options Component
@@ -33,7 +62,7 @@ const CompressionOptions = ({
   outputType,
   options,
   onOutputTypeChange,
-  onQualityChange
+  onQualityChange,
 }: {
   outputType: OutputType
   options: CompressionOptionsType
@@ -42,7 +71,9 @@ const CompressionOptions = ({
 }) => (
   <div className="space-y-4 p-4 sm:p-6 rounded-xl bg-card/20 backdrop-blur-lg border border-border/50 shadow-sm transition-all duration-300">
     <div>
-      <label className="block text-xs sm:text-sm font-medium text-foreground/90 mb-2">Output Format</label>
+      <label className="block text-xs sm:text-sm font-medium text-foreground/90 mb-2">
+        Output Format
+      </label>
       <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
         {(['avif', 'jpeg', 'jxl', 'png', 'webp'] as const).map((format) => (
           <Button
@@ -51,7 +82,7 @@ const CompressionOptions = ({
               buttonStyles.base,
               buttonStyles.format,
               outputType === format && buttonStyles.formatActive,
-              'uppercase text-xs sm:text-sm font-medium focus:outline-none py-2 sm:py-2 w-full'
+              'uppercase text-xs sm:text-sm font-medium focus:outline-none py-2 sm:py-2 w-full',
             )}
             onClick={() => onOutputTypeChange(format)}
           >
@@ -62,11 +93,14 @@ const CompressionOptions = ({
     </div>
     {outputType !== 'png' && (
       <div>
-        <label htmlFor='imageQualityRangeInput' className="block text-xs sm:text-sm font-medium text-foreground/90 mb-2 tabular-nums">
+        <label
+          htmlFor="imageQualityRangeInput"
+          className="block text-xs sm:text-sm font-medium text-foreground/90 mb-2 tabular-nums"
+        >
           Quality: {options.quality}%
         </label>
         <Slider
-          id='imageQualityRangeInput'
+          id="imageQualityRangeInput"
           value={[options.quality]}
           min={1}
           max={100}
@@ -83,7 +117,7 @@ const CompressionOptions = ({
 const ImageComparisonModal = ({
   image,
   isOpen,
-  onClose
+  onClose,
 }: {
   image: ImageFile
   isOpen: boolean
@@ -113,7 +147,7 @@ const ImageComparisonModal = ({
             <X className="w-5 h-5" />
           </Button>
         </div>
-        
+
         <div className="p-4">
           <div className="mb-4 flex flex-wrap gap-4 text-sm">
             <div className="flex items-center gap-2">
@@ -126,13 +160,19 @@ const ImageComparisonModal = ({
                 Compressed ({formatFileSize(image.compressedSize || 0)})
                 {image.compressedSize && (
                   <span className="ml-1 text-green-400 font-medium">
-                    (-{Math.round(((image.originalSize - image.compressedSize) / image.originalSize) * 100)}%)
+                    (-
+                    {Math.round(
+                      ((image.originalSize - image.compressedSize) /
+                        image.originalSize) *
+                        100,
+                    )}
+                    %)
                   </span>
                 )}
               </span>
             </div>
           </div>
-          
+
           <div className="relative aspect-video w-full max-h-[60vh] overflow-hidden rounded-lg border border-border/30">
             <ReactCompareSlider
               itemOne={
@@ -153,7 +193,7 @@ const ImageComparisonModal = ({
               style={{ height: '100%' }}
             />
           </div>
-          
+
           <div className="mt-4 text-center">
             <p className="text-xs text-muted-foreground">
               Drag the slider to compare original (left) vs compressed (right)
@@ -171,7 +211,7 @@ const ImageItem = ({
   onRemove,
   onDownload,
   onRetry,
-  onCompare
+  onCompare,
 }: {
   image: ImageFile
   onRemove: (id: string) => void
@@ -183,7 +223,7 @@ const ImageItem = ({
     className={cn(
       'rounded-xl bg-gradient-to-r from-[#1a1b2e]/50 to-[#2a2b3e]/50 backdrop-blur-lg',
       'border border-border/30 shadow-lg p-4',
-      'transition-all duration-300 hover:shadow-xl hover:-translate-y-1'
+      'transition-all duration-300 hover:shadow-xl hover:-translate-y-1',
     )}
   >
     <div className="flex items-start gap-3 mb-3">
@@ -296,9 +336,17 @@ const ImageItem = ({
       {image.compressedSize && (
         <>
           <ArrowRight className="inline w-3 h-3 mx-1 text-muted-foreground/60" />
-          <span className="tabular-nums">{formatFileSize(image.compressedSize)}</span>
+          <span className="tabular-nums">
+            {formatFileSize(image.compressedSize)}
+          </span>
           <span className="ml-1 text-green-400 font-medium">
-            (-{Math.round(((image.originalSize - image.compressedSize) / image.originalSize) * 100)}%)
+            (-
+            {Math.round(
+              ((image.originalSize - image.compressedSize) /
+                image.originalSize) *
+                100,
+            )}
+            %)
           </span>
         </>
       )}
@@ -313,7 +361,11 @@ const ImageItem = ({
 )
 
 // Sample Images Component
-const SampleImages = ({ onSampleImageClick }: { onSampleImageClick: (url: string) => void }) => (
+const SampleImages = ({
+  onSampleImageClick,
+}: {
+  onSampleImageClick: (url: string) => void
+}) => (
   <div className="mt-4 sm:mt-6">
     <h3 className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-4">
       Try Sample Images
@@ -343,7 +395,7 @@ export default function Squish() {
   const [images, setImages] = useState<ImageFile[]>([])
   const [outputType, setOutputType] = useState<OutputType>('webp')
   const [options, setOptions] = useState<CompressionOptionsType>({
-    quality: DEFAULT_QUALITY_SETTINGS.webp
+    quality: DEFAULT_QUALITY_SETTINGS.webp,
   })
   const [isDownloading, setIsDownloading] = useState(false)
   const [isZipping, setIsZipping] = useState(false)
@@ -363,13 +415,17 @@ export default function Squish() {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       const newImages = acceptedFiles
-        .filter((file) => file.type.startsWith('image/') || file.name.toLowerCase().endsWith('.jxl'))
+        .filter(
+          (file) =>
+            file.type.startsWith('image/') ||
+            file.name.toLowerCase().endsWith('.jxl'),
+        )
         .map((file) => ({
           id: crypto.randomUUID(),
           file,
           status: 'pending' as const,
           originalSize: file.size,
-          preview: URL.createObjectURL(file)
+          preview: URL.createObjectURL(file),
         }))
       setImages((prev) => [...prev, ...newImages])
       toast.info(`Processing ${acceptedFiles.length} image(s)...`)
@@ -377,7 +433,7 @@ export default function Squish() {
         newImages.forEach((image) => addToQueue(image.id))
       })
     },
-    [addToQueue]
+    [addToQueue],
   )
 
   // Handle paste event for images
@@ -397,7 +453,7 @@ export default function Squish() {
         onDrop(imageFiles)
       }
     },
-    [onDrop]
+    [onDrop],
   )
 
   // Handle sample image click
@@ -408,18 +464,22 @@ export default function Squish() {
         const response = await fetch(url, {
           method: 'GET',
           mode: 'cors',
-          headers: { 'Accept': 'image/jpeg, image/png' }
+          headers: { Accept: 'image/jpeg, image/png' },
         })
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
+        if (!response.ok)
+          throw new Error(`HTTP error! status: ${response.status}`)
         const blob = await response.blob()
-        if (!blob.type.startsWith('image/')) throw new Error('Fetched content is not an image')
+        if (!blob.type.startsWith('image/'))
+          throw new Error('Fetched content is not an image')
         const file = new File([blob], 'sample-image.jpg', { type: blob.type })
         onDrop([file])
       } catch (error) {
-        toast.error(`Failed to load sample image: ${error instanceof Error ? error.message : 'Unknown error'}`)
+        toast.error(
+          `Failed to load sample image: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        )
       }
     },
-    [onDrop]
+    [onDrop],
   )
 
   // Handle removing a single image
@@ -435,12 +495,16 @@ export default function Squish() {
   const handleRetryImage = useCallback(
     (id: string) => {
       setImages((prev) =>
-        prev.map((img) => (img.id === id ? { ...img, status: 'pending' as const, error: undefined } : img))
+        prev.map((img) =>
+          img.id === id
+            ? { ...img, status: 'pending' as const, error: undefined }
+            : img,
+        ),
       )
       addToQueue(id)
       toast.info('Retrying image processing...')
     },
-    [addToQueue]
+    [addToQueue],
   )
 
   // Handle clearing all images
@@ -470,7 +534,10 @@ export default function Squish() {
       }
       toast.success(`Downloaded ${completedImages.length} image(s)`)
     } catch (error) {
-      logger.error(`Error downloading images: ${error instanceof Error ? error.message : 'Unknown error'}`, { images })
+      logger.error(
+        `Error downloading images: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        { images },
+      )
       toast.error('Failed to download images')
     } finally {
       setIsDownloading(false)
@@ -503,7 +570,10 @@ export default function Squish() {
 
       toast.success(`Downloaded ${completedImages.length} image(s) as ZIP`)
     } catch (error) {
-      logger.error(`Error creating ZIP: ${error instanceof Error ? error.message : 'Unknown error'}`, { images })
+      logger.error(
+        `Error creating ZIP: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        { images },
+      )
       toast.error('Failed to create ZIP file')
     } finally {
       setIsZipping(false)
@@ -515,7 +585,7 @@ export default function Squish() {
     getInputProps,
     isDragActive,
     isDragAccept,
-    isDragReject
+    isDragReject,
   } = useDropzone({
     onDrop,
     accept: {
@@ -523,11 +593,14 @@ export default function Squish() {
       'image/png': ['.png'],
       'image/webp': ['.webp'],
       'image/avif': ['.avif'],
-      'image/jxl': ['.jxl']
-    }
+      'image/jxl': ['.jxl'],
+    },
   })
 
-  const completedImages = useMemo(() => images.filter((img) => img.status === 'complete').length, [images])
+  const completedImages = useMemo(
+    () => images.filter((img) => img.status === 'complete').length,
+    [images],
+  )
 
   return (
     <div onPaste={handlePaste} className="container mx-2 sm:mx-auto p-2 sm:p-4">
@@ -539,7 +612,8 @@ export default function Squish() {
             </CardTitle>
           </div>
           <p className="mt-2 text-xs sm:text-sm text-muted-foreground">
-            Compress images up to 90% while maintaining high quality, completely free and without the need for uploading.
+            Compress images up to 90% while maintaining high quality, completely
+            free and without the need for uploading.
           </p>
         </CardHeader>
         <CardContent className="p-4 sm:p-6 space-y-4 sm:space-y-6">
@@ -549,7 +623,7 @@ export default function Squish() {
             onOutputTypeChange={handleOutputTypeChange}
             onQualityChange={(value) => setOptions({ quality: value })}
           />
-          <div 
+          <div
             {...getRootProps()}
             className={cn(
               'p-10 border-2 border-dashed rounded-xl text-center cursor-pointer transition-all duration-300',
@@ -559,19 +633,22 @@ export default function Squish() {
                 'border-green-500/70 bg-green-500/10': isDragAccept,
                 'border-red-500/70 bg-red-500/10': isDragReject,
                 'border-blue-500/70 bg-blue-500/10': isDragActive,
-                'border-white/[0.1]': !isDragActive && !isDragAccept && !isDragReject
-              }
+                'border-white/[0.1]':
+                  !isDragActive && !isDragAccept && !isDragReject,
+              },
             )}
           >
             <input {...getInputProps()} className="hidden" />
-            <div className="flex flex-col items-center gap-3"> 
+            <div className="flex flex-col items-center gap-3">
               <Upload className="w-14 h-14 text-blue-400" />
               <p className="text-xl text-foreground/90">
                 {isDragActive
                   ? 'Drop your images here...'
                   : 'Drag and drop images here'}
               </p>
-              <p className="text-sm text-muted-foreground">or click to select files (JPEG, PNG, WebP, AVIF, JXL)</p>
+              <p className="text-sm text-muted-foreground">
+                or click to select files (JPEG, PNG, WebP, AVIF, JXL)
+              </p>
             </div>
           </div>
           <div className="flex sm:flex-nowrap flex-wrap gap-3">
@@ -579,13 +656,18 @@ export default function Squish() {
               <Button
                 onClick={handleDownloadAll}
                 disabled={isDownloading || isZipping}
-                aria-label={isDownloading ? 'Downloading images' : `Download all ${completedImages} images`}
+                aria-label={
+                  isDownloading
+                    ? 'Downloading images'
+                    : `Download all ${completedImages} images`
+                }
                 aria-disabled={isDownloading || isZipping}
                 className={cn(
                   buttonStyles.base,
                   buttonStyles.download,
                   'flex-1',
-                  (isDownloading || isZipping) && 'opacity-50 cursor-not-allowed pointer-events-none'
+                  (isDownloading || isZipping) &&
+                    'opacity-50 cursor-not-allowed pointer-events-none',
                 )}
               >
                 {isDownloading ? (
@@ -602,13 +684,18 @@ export default function Squish() {
               <Button
                 onClick={handleDownloadZip}
                 disabled={isZipping || isDownloading}
-                aria-label={isZipping ? 'Creating ZIP file' : `Download all ${completedImages} images as ZIP`}
+                aria-label={
+                  isZipping
+                    ? 'Creating ZIP file'
+                    : `Download all ${completedImages} images as ZIP`
+                }
                 aria-disabled={isZipping || isDownloading}
                 className={cn(
                   buttonStyles.base,
                   buttonStyles.downloadZip,
                   'flex-1',
-                  (isZipping || isDownloading) && 'opacity-50 cursor-not-allowed pointer-events-none'
+                  (isZipping || isDownloading) &&
+                    'opacity-50 cursor-not-allowed pointer-events-none',
                 )}
               >
                 {isZipping ? (
@@ -646,7 +733,9 @@ export default function Squish() {
               ))}
             </div>
           )}
-          {images.length === 0 && <SampleImages onSampleImageClick={handleSampleImageClick} />}
+          {images.length === 0 && (
+            <SampleImages onSampleImageClick={handleSampleImageClick} />
+          )}
         </CardContent>
       </Card>
 

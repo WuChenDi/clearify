@@ -4,7 +4,7 @@ import {
   AutoProcessor,
   RawImage,
   PreTrainedModel,
-  Processor
+  Processor,
 } from '@huggingface/transformers'
 
 import logger from '@/lib/logger'
@@ -15,17 +15,17 @@ const FALLBACK_MODEL_ID = 'briaai/RMBG-1.4'
 const RMBG_2_0_MODEL_ID = 'briaai/RMBG-2.0'
 
 interface ModelState {
-  model: PreTrainedModel | null;
-  processor: Processor | null;
-  isWebGPUSupported: boolean;
-  currentModelId: string;
-  isIOS: boolean;
+  model: PreTrainedModel | null
+  processor: Processor | null
+  isWebGPUSupported: boolean
+  currentModelId: string
+  isIOS: boolean
 }
 
 interface ModelInfo {
-  currentModelId: string;
-  isWebGPUSupported: boolean;
-  isIOS: boolean;
+  currentModelId: string
+  isWebGPUSupported: boolean
+  isIOS: boolean
 }
 
 // iOS detection
@@ -39,7 +39,7 @@ const state: ModelState = {
   processor: null,
   isWebGPUSupported: false,
   currentModelId: FALLBACK_MODEL_ID,
-  isIOS: isIOS()
+  isIOS: isIOS(),
 }
 
 // Configure environment
@@ -79,9 +79,9 @@ async function initializeWebGPU(): Promise<boolean> {
 
     // Log WASM configuration for debugging
     logger.debug('WASM configuration:', env.backends?.onnx?.wasm)
-    
+
     state.model = await AutoModel.from_pretrained(WEBGPU_MODEL_ID, {
-      device: 'webgpu'
+      device: 'webgpu',
     })
     state.processor = await AutoProcessor.from_pretrained(WEBGPU_MODEL_ID, {})
     state.isWebGPUSupported = true
@@ -115,8 +115,8 @@ export async function initializeModel(forceModelId?: string): Promise<boolean> {
           image_std: [1, 1, 1],
           resample: 2,
           rescale_factor: 0.00392156862745098,
-          size: { width: 1024, height: 1024 }
-        }
+          size: { width: 1024, height: 1024 },
+        },
       })
       state.currentModelId = FALLBACK_MODEL_ID
       logger.log('RMBG-1.4 model initialized successfully for iOS')
@@ -143,8 +143,8 @@ export async function initializeModel(forceModelId?: string): Promise<boolean> {
           image_std: [1, 1, 1],
           resample: 2,
           rescale_factor: 0.00392156862745098,
-          size: { width: 1024, height: 1024 }
-        }
+          size: { width: 1024, height: 1024 },
+        },
       })
       state.currentModelId = RMBG_2_0_MODEL_ID
       logger.log('RMBG-2.0 model initialized successfully')
@@ -160,9 +160,11 @@ export async function initializeModel(forceModelId?: string): Promise<boolean> {
         if (progress.progress) {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-expect-error
-          logger.log(`Model loading progress: ${(progress.progress).toFixed(2)}%`)
+          logger.log(
+            `Model loading progress: ${(progress.progress).toFixed(2)}%`,
+          )
         }
-      }
+      },
     })
     state.processor = await AutoProcessor.from_pretrained(FALLBACK_MODEL_ID, {
       config: {
@@ -175,18 +177,25 @@ export async function initializeModel(forceModelId?: string): Promise<boolean> {
         image_std: [0.5, 0.5, 0.5],
         resample: 2,
         rescale_factor: 0.00392156862745098,
-        size: { width: 1024, height: 1024 }
-      }
+        size: { width: 1024, height: 1024 },
+      },
     })
     state.currentModelId = FALLBACK_MODEL_ID
     return true
   } catch (error) {
     logger.error('Model initialization failed:', error)
-    if (forceModelId === WEBGPU_MODEL_ID || forceModelId === RMBG_2_0_MODEL_ID) {
+    if (
+      forceModelId === WEBGPU_MODEL_ID ||
+      forceModelId === RMBG_2_0_MODEL_ID
+    ) {
       logger.log('Falling back to cross-browser model...')
       return initializeModel(FALLBACK_MODEL_ID)
     }
-    throw new Error(error instanceof Error ? error.message : 'Failed to initialize background removal model')
+    throw new Error(
+      error instanceof Error
+        ? error.message
+        : 'Failed to initialize background removal model',
+    )
   }
 }
 
@@ -195,13 +204,15 @@ export function getModelInfo(): ModelInfo {
   return {
     currentModelId: state.currentModelId,
     isWebGPUSupported: Boolean(navigator.gpu),
-    isIOS: state.isIOS
+    isIOS: state.isIOS,
   }
 }
 
 export async function processImage(image: File): Promise<File> {
   if (!state.model || !state.processor) {
-    throw new Error('Model not initialized, please call initializeModel() first')
+    throw new Error(
+      'Model not initialized, please call initializeModel() first',
+    )
   }
 
   try {
@@ -213,7 +224,7 @@ export async function processImage(image: File): Promise<File> {
     const maskData = (
       await RawImage.fromTensor(output[0].mul(255).to('uint8')).resize(
         img.width,
-        img.height
+        img.height,
       )
     ).data
 
@@ -236,7 +247,11 @@ export async function processImage(image: File): Promise<File> {
 
     // Convert to Blob
     const blob = await new Promise<Blob>((resolve, reject) =>
-      canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('Failed to create Blob'))), 'image/png')
+      canvas.toBlob(
+        (blob) =>
+          blob ? resolve(blob) : reject(new Error('Failed to create Blob')),
+        'image/png',
+      ),
     )
 
     const [fileName] = image.name.split('.')
