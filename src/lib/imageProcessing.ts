@@ -6,11 +6,11 @@ import * as webp from '@jsquash/webp'
 
 import { ensureWasmLoaded } from '@/lib'
 import type {
-  OutputType,
-  CompressionOptions,
   AvifEncodeOptions,
+  CompressionOptions,
   JpegEncodeOptions,
   JxlEncodeOptions,
+  OutputType,
   WebpEncodeOptions,
 } from '@/types'
 
@@ -24,7 +24,6 @@ export async function decode(
   try {
     switch (sourceType) {
       case 'avif':
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
         return await avif.decode(fileBuffer)
       case 'jpeg':

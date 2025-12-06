@@ -1,10 +1,9 @@
+import type { PreTrainedModel, Processor } from '@huggingface/transformers'
 import {
-  env,
   AutoModel,
   AutoProcessor,
+  env,
   RawImage,
-  PreTrainedModel,
-  Processor,
 } from '@huggingface/transformers'
 
 import logger from '@/lib/logger'
@@ -155,12 +154,10 @@ export async function initializeModel(forceModelId?: string): Promise<boolean> {
     configureEnv(true)
     state.model = await AutoModel.from_pretrained(FALLBACK_MODEL_ID, {
       progress_callback: (progress) => {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
         if (progress.progress) {
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-expect-error
           logger.log(
+            // @ts-expect-error
             `Model loading progress: ${(progress.progress).toFixed(2)}%`,
           )
         }
