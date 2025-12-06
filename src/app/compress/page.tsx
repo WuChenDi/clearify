@@ -2,7 +2,14 @@
 
 import { FFmpeg } from '@ffmpeg/ffmpeg'
 import { fetchFile, toBlobURL } from '@ffmpeg/util'
-import { FileVideo, Upload, X, Loader2, AlertTriangle, Settings } from 'lucide-react'
+import {
+  FileVideo,
+  Upload,
+  X,
+  Loader2,
+  AlertTriangle,
+  Settings,
+} from 'lucide-react'
 import React, { useState, useRef, useEffect } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { toast } from 'sonner'
@@ -49,14 +56,21 @@ export default function Compress() {
           logger.log(`[FFmpeg Log] [${type}]`, message)
         })
         await ffmpeg.load({
-          coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-          wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm')
+          coreURL: await toBlobURL(
+            `${baseURL}/ffmpeg-core.js`,
+            'text/javascript',
+          ),
+          wasmURL: await toBlobURL(
+            `${baseURL}/ffmpeg-core.wasm`,
+            'application/wasm',
+          ),
         })
         setIsReady(true)
         toast.success('Video processor loaded successfully')
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load video processor'
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to load video processor'
       setError(errorMessage)
       toast.error(errorMessage)
     } finally {
@@ -127,17 +141,28 @@ export default function Compress() {
           args.push('-crf', settings.crfValue || '23')
           break
         case 'percentage':
-          const crf = Math.round(51 - (parseInt(settings.targetPercentage || '100') / 100) * 33)
+          const crf = Math.round(
+            51 - (parseInt(settings.targetPercentage || '100') / 100) * 33,
+          )
           args.push('-crf', crf.toString())
           break
         case 'filesize':
           const targetBitrate = Math.round(
-            (parseInt(settings.targetFilesize || '100') * 8192) / (videoRef.current?.duration || 60)
+            (parseInt(settings.targetFilesize || '100') * 8192) /
+              (videoRef.current?.duration || 60),
           )
           args.push('-b:v', `${targetBitrate}k`)
           break
       }
-      args.push('-c:a', settings.audioCodec, '-b:a', settings.audioBitrate, '-r', settings.frameRate, 'output.mp4')
+      args.push(
+        '-c:a',
+        settings.audioCodec,
+        '-b:a',
+        settings.audioBitrate,
+        '-r',
+        settings.frameRate,
+        'output.mp4',
+      )
 
       await ffmpeg.exec(args)
       const outputData = await ffmpeg.readFile('output.mp4')
@@ -152,7 +177,8 @@ export default function Compress() {
       await ffmpeg.deleteFile('input.mp4')
       await ffmpeg.deleteFile('output.mp4')
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Compression failed'
+      const errorMessage =
+        err instanceof Error ? err.message : 'Compression failed'
       setError(errorMessage)
       toast.error(errorMessage)
       setProgress(0)
@@ -168,10 +194,10 @@ export default function Compress() {
     getInputProps,
     isDragActive,
     isDragAccept,
-    isDragReject
+    isDragReject,
   } = useDropzone({
     accept: {
-      'video/*': []
+      'video/*': [],
     },
     maxFiles: 1,
     onDrop: async (acceptedFiles) => {
@@ -179,7 +205,7 @@ export default function Compress() {
       setVideo(acceptedFiles[0])
       if (!isReady) await loadFFmpeg()
       toast.info('Video file selected')
-    }
+    },
   })
 
   return (
@@ -199,7 +225,8 @@ export default function Compress() {
           </Button>
         </div>
         <p className="mt-2 text-xs sm:text-sm text-muted-foreground">
-          Compress videos in your browser by up to 90% for free. No upload required.
+          Compress videos in your browser by up to 90% for free. No upload
+          required.
         </p>
       </CardHeader>
       <CardContent className="p-4 sm:p-6">
@@ -215,21 +242,30 @@ export default function Compress() {
                   'border-green-500/70 bg-green-500/10': isDragAccept,
                   'border-red-500/70 bg-red-500/10': isDragReject,
                   'border-blue-500/70 bg-blue-500/10': isDragActive,
-                  'border-white/[0.1]': !isDragActive && !isDragAccept && !isDragReject,
-                  'cursor-not-allowed opacity-60': isLoading
-                }
+                  'border-white/[0.1]':
+                    !isDragActive && !isDragAccept && !isDragReject,
+                  'cursor-not-allowed opacity-60': isLoading,
+                },
               )}
             >
-              <input {...getInputProps()} className="hidden" disabled={isLoading} />
+              <input
+                {...getInputProps()}
+                className="hidden"
+                disabled={isLoading}
+              />
               {isLoading ? (
                 <div className="flex flex-col items-center gap-3 sm:gap-4">
                   <Loader2 className="w-10 h-10 sm:w-12 sm:h-12 text-blue-400 animate-spin" />
-                  <p className="text-base sm:text-lg text-foreground/90">Loading video processor...</p>
+                  <p className="text-base sm:text-lg text-foreground/90">
+                    Loading video processor...
+                  </p>
                 </div>
               ) : error ? (
                 <div className="flex flex-col items-center gap-3 sm:gap-4">
                   <AlertTriangle className="w-10 h-10 sm:w-12 sm:h-12 text-red-500" />
-                  <p className="text-base sm:text-lg text-red-500 font-medium">{error}</p>
+                  <p className="text-base sm:text-lg text-red-500 font-medium">
+                    {error}
+                  </p>
                   <Button
                     onClick={(e) => {
                       e.stopPropagation()
@@ -244,9 +280,13 @@ export default function Compress() {
                 <div className="flex flex-col items-center gap-3 sm:gap-4">
                   <FileVideo className="w-10 h-10 sm:w-12 sm:h-12 text-blue-400" />
                   <p className="text-lg sm:text-xl text-foreground/90">
-                    {isDragActive ? 'Drop your video here...' : 'Drag and drop a video file here'}
+                    {isDragActive
+                      ? 'Drop your video here...'
+                      : 'Drag and drop a video file here'}
                   </p>
-                  <p className="text-xs sm:text-sm text-muted-foreground">or click to select a video (MP4, MOV, etc.)</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    or click to select a video (MP4, MOV, etc.)
+                  </p>
                 </div>
               )}
             </div>
@@ -293,13 +333,17 @@ export default function Compress() {
               {(isProcessing || outputUrl) && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 bg-gray-900/20 p-3 sm:p-4 rounded-xl w-full">
                   <div className="flex flex-col items-center">
-                    <span className="text-xs uppercase text-gray-400 mb-1">Original</span>
+                    <span className="text-xs uppercase text-gray-400 mb-1">
+                      Original
+                    </span>
                     <span className="text-lg sm:text-2xl font-bold text-foreground/90">
                       {formatFileSize(video.size)}
                     </span>
                   </div>
                   <div className="flex flex-col items-center">
-                    <span className="text-xs uppercase text-gray-400 mb-1">Compressed</span>
+                    <span className="text-xs uppercase text-gray-400 mb-1">
+                      Compressed
+                    </span>
                     <span className="text-lg sm:text-2xl font-bold text-foreground/90">
                       {processedSize ? formatFileSize(processedSize) : '0.0'}
                     </span>
@@ -340,10 +384,17 @@ export default function Compress() {
 
               {outputUrl && (
                 <div className="space-y-4 w-full">
-                  <video src={outputUrl} controls className="w-full rounded-lg object-contain" />
+                  <video
+                    src={outputUrl}
+                    controls
+                    className="w-full rounded-lg object-contain"
+                  />
                   <div className="flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-4 w-full">
                     <span className="text-xs sm:text-sm text-muted-foreground">
-                      Saved {processedSize && ((1 - processedSize / video.size) * 100).toFixed(0)}% of original size
+                      Saved{' '}
+                      {processedSize &&
+                        ((1 - processedSize / video.size) * 100).toFixed(0)}
+                      % of original size
                     </span>
                     <a
                       href={outputUrl}

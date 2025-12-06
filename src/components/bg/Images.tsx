@@ -1,25 +1,27 @@
 import { Trash2, Edit2, Download } from 'lucide-react'
 import Image from 'next/image'
 import React, { useState } from 'react'
-import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider'
+import {
+  ReactCompareSlider,
+  ReactCompareSliderImage,
+} from 'react-compare-slider'
 
 import { ImageFile } from '@/app/bg/page'
 import { Button } from '@/components/ui/button'
 
 import { EditModal } from './EditModal'
 
-
 interface ImagesProps {
-  images: ImageFile[];
+  images: ImageFile[]
   // eslint-disable-next-line no-unused-vars
-  onDelete: (id: number) => void;
+  onDelete: (id: number) => void
 }
 
 export function Images({ images, onDelete }: ImagesProps) {
   return (
     <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {images.map((image) => {
-        if(image.file.type.includes('video')) {
+        if (image.file.type.includes('video')) {
           return <Video video={image} key={image.id} />
         } else {
           return <ImageSpot image={image} onDelete={onDelete} key={image.id} />
@@ -45,9 +47,9 @@ function Video({ video }: { video: ImageFile }) {
 }
 
 interface ImageSpotProps {
-  image: ImageFile;
+  image: ImageFile
   // eslint-disable-next-line no-unused-vars
-  onDelete: (id: number) => void;
+  onDelete: (id: number) => void
 }
 
 function ImageSpot({ image, onDelete }: ImageSpotProps) {
@@ -55,14 +57,17 @@ function ImageSpot({ image, onDelete }: ImageSpotProps) {
   const [processedImageUrl, setProcessedImageUrl] = useState('')
 
   const url = URL.createObjectURL(image.file)
-  const processedURL = image.processedFile ? URL.createObjectURL(image.processedFile) : ''
+  const processedURL = image.processedFile
+    ? URL.createObjectURL(image.processedFile)
+    : ''
   const isProcessing = !image.processedFile
 
   const handleEditSave = (editedImageUrl: string) => {
     setProcessedImageUrl(editedImageUrl)
   }
 
-  const transparentBg = 'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAGUExURb+/v////5nD/3QAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAUSURBVBjTYwABQSCglEENMxgYGAAynwRB8BEAgQAAAABJRU5ErkJggg==")'
+  const transparentBg =
+    'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQBAMAAADt3eJSAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAGUExURb+/v////5nD/3QAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAUSURBVBjTYwABQSCglEENMxgYGAAynwRB8BEAgQAAAABJRU5ErkJggg==")'
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -85,11 +90,11 @@ function ImageSpot({ image, onDelete }: ImageSpotProps) {
             </div>
           </div>
         ) : (
-          <div 
+          <div
             className="w-full aspect-square"
-            style={{ 
+            style={{
               background: transparentBg,
-              backgroundRepeat: 'repeat'
+              backgroundRepeat: 'repeat',
             }}
           >
             <div className="absolute inset-0">
@@ -102,18 +107,15 @@ function ImageSpot({ image, onDelete }: ImageSpotProps) {
               /> */}
               <ReactCompareSlider
                 itemOne={
-                  <ReactCompareSliderImage
-                    src={url}
-                    alt="Original Image"
-                  />
+                  <ReactCompareSliderImage src={url} alt="Original Image" />
                 }
                 itemTwo={
                   <ReactCompareSliderImage
                     src={processedImageUrl || processedURL}
                     alt="Processed Image"
-                    style={{ 
+                    style={{
                       background: transparentBg,
-                      backgroundRepeat: 'repeat'
+                      backgroundRepeat: 'repeat',
                     }}
                   />
                 }
@@ -137,7 +139,7 @@ function ImageSpot({ image, onDelete }: ImageSpotProps) {
               <Trash2 className="w-4 h-4 text-red-600" />
               <span className="text-sm text-gray-700">Delete</span>
             </Button>
-            
+
             <Button
               onClick={() => setIsEditModalOpen(true)}
               variant="outline"
@@ -148,7 +150,7 @@ function ImageSpot({ image, onDelete }: ImageSpotProps) {
               <Edit2 className="w-4 h-4 text-blue-600" />
               <span className="text-sm text-gray-700">Edit</span>
             </Button>
-            
+
             <Button
               asChild
               variant="outline"

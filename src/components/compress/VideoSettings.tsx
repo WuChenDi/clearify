@@ -1,21 +1,40 @@
 import React from 'react'
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select'
 import type { ConversionSettings } from '@/types'
 
 interface VideoSettingsProps {
-  settings: ConversionSettings;
+  settings: ConversionSettings
   // eslint-disable-next-line no-unused-vars
-  onSettingsChange: (settings: ConversionSettings) => void;
-  open: boolean;
+  onSettingsChange: (settings: ConversionSettings) => void
+  open: boolean
   // eslint-disable-next-line no-unused-vars
-  onOpenChange: (open: boolean) => void;
+  onOpenChange: (open: boolean) => void
 }
 
-export default function VideoSettings({ settings, onSettingsChange, open, onOpenChange }: VideoSettingsProps) {
-  const handleSettingChange = (key: keyof ConversionSettings, value: string) => {
+export default function VideoSettings({
+  settings,
+  onSettingsChange,
+  open,
+  onOpenChange,
+}: VideoSettingsProps) {
+  const handleSettingChange = (
+    key: keyof ConversionSettings,
+    value: string,
+  ) => {
     console.log(key, value)
     onSettingsChange({ ...settings, [key]: value })
   }
@@ -25,13 +44,17 @@ export default function VideoSettings({ settings, onSettingsChange, open, onOpen
       case 'percentage':
         return (
           <div>
-            <label className="text-sm font-medium text-muted-foreground">Target Quality Percentage</label>
+            <label className="text-sm font-medium text-muted-foreground">
+              Target Quality Percentage
+            </label>
             <Input
               type="range"
               min="1"
               max="100"
               value={settings.targetPercentage || '100'}
-              onChange={(e) => handleSettingChange('targetPercentage', e.target.value)}
+              onChange={(e) =>
+                handleSettingChange('targetPercentage', e.target.value)
+              }
               className="mt-1 block w-full"
             />
             <div className="mt-1 text-sm text-gray-500">
@@ -42,13 +65,17 @@ export default function VideoSettings({ settings, onSettingsChange, open, onOpen
       case 'filesize':
         return (
           <div>
-            <label className="text-sm font-medium text-muted-foreground">Target File Size (MB)</label>
+            <label className="text-sm font-medium text-muted-foreground">
+              Target File Size (MB)
+            </label>
             <Input
               type="number"
               min="1"
               max="10240"
               value={settings.targetFilesize || '100'}
-              onChange={(e) => handleSettingChange('targetFilesize', e.target.value)}
+              onChange={(e) =>
+                handleSettingChange('targetFilesize', e.target.value)
+              }
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
             />
           </div>
@@ -56,7 +83,9 @@ export default function VideoSettings({ settings, onSettingsChange, open, onOpen
       case 'crf':
         return (
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-muted-foreground">Video Quality (CRF)</label>
+            <label className="text-sm font-medium text-muted-foreground">
+              Video Quality (CRF)
+            </label>
             <Select
               value={settings.crfValue || '23'}
               onValueChange={(value) => handleSettingChange('crfValue', value)}
@@ -67,7 +96,12 @@ export default function VideoSettings({ settings, onSettingsChange, open, onOpen
               <SelectContent className="border-border bg-popover/90 rounded-md">
                 {Array.from({ length: 34 }, (_, i) => i + 18).map((value) => (
                   <SelectItem key={value} value={value.toString()}>
-                    {value} {value === 18 ? '(Best Quality)' : value === 51 ? '(Smallest Size)' : ''}
+                    {value}{' '}
+                    {value === 18
+                      ? '(Best Quality)'
+                      : value === 51
+                        ? '(Smallest Size)'
+                        : ''}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -77,10 +111,14 @@ export default function VideoSettings({ settings, onSettingsChange, open, onOpen
       case 'bitrate':
         return (
           <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-muted-foreground">Video Bitrate</label>
+            <label className="text-sm font-medium text-muted-foreground">
+              Video Bitrate
+            </label>
             <Select
               value={settings.videoBitrate}
-              onValueChange={(value) => handleSettingChange('videoBitrate', value)}
+              onValueChange={(value) =>
+                handleSettingChange('videoBitrate', value)
+              }
             >
               <SelectTrigger className="bg-card/50 border border-border w-full md:w-[220px] rounded-md p-2 focus:ring-2 focus:ring-blue-400">
                 <SelectValue placeholder="Select a bitrate" />
@@ -104,34 +142,46 @@ export default function VideoSettings({ settings, onSettingsChange, open, onOpen
         <DialogHeader>
           <DialogTitle>Conversion Settings</DialogTitle>
         </DialogHeader>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
           <div>
-            <label className="text-sm font-medium text-muted-foreground">Compression Method</label>
+            <label className="text-sm font-medium text-muted-foreground">
+              Compression Method
+            </label>
             <Select
               value={settings.compressionMethod}
-              onValueChange={(value) => handleSettingChange('compressionMethod', value)}
+              onValueChange={(value) =>
+                handleSettingChange('compressionMethod', value)
+              }
             >
               <SelectTrigger className="bg-card/50 border border-border w-full md:w-[220px] rounded-md p-2 focus:ring-2 focus:ring-blue-400">
                 <SelectValue placeholder="Select a method" />
               </SelectTrigger>
               <SelectContent className="border-border bg-popover/90 rounded-md">
-                <SelectItem value="percentage">Target a quality percentage</SelectItem>
-                <SelectItem value="filesize">Target a file size (MB)</SelectItem>
-                <SelectItem value="crf">Target a video quality (CRF)</SelectItem>
+                <SelectItem value="percentage">
+                  Target a quality percentage
+                </SelectItem>
+                <SelectItem value="filesize">
+                  Target a file size (MB)
+                </SelectItem>
+                <SelectItem value="crf">
+                  Target a video quality (CRF)
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
-          
-          <div className="md:col-span-2">
-            {renderCompressionControl()}
-          </div>
+
+          <div className="md:col-span-2">{renderCompressionControl()}</div>
 
           <div>
-            <label className="text-sm font-medium text-foreground/80">Video Codec</label>
+            <label className="text-sm font-medium text-foreground/80">
+              Video Codec
+            </label>
             <Select
               value={settings.videoCodec}
-              onValueChange={(value) => handleSettingChange('videoCodec', value)}
+              onValueChange={(value) =>
+                handleSettingChange('videoCodec', value)
+              }
             >
               <SelectTrigger className="bg-card/50 border border-border w-full md:w-[220px] rounded-md p-2 focus:ring-2 focus:ring-blue-400">
                 <SelectValue placeholder="Select a codec" />
@@ -144,10 +194,14 @@ export default function VideoSettings({ settings, onSettingsChange, open, onOpen
           </div>
 
           <div>
-            <label className="text-sm font-medium text-foreground/80">Audio Codec</label>
+            <label className="text-sm font-medium text-foreground/80">
+              Audio Codec
+            </label>
             <Select
               value={settings.audioCodec}
-              onValueChange={(value) => handleSettingChange('audioCodec', value)}
+              onValueChange={(value) =>
+                handleSettingChange('audioCodec', value)
+              }
             >
               <SelectTrigger className="bg-card/50 border border-border w-full md:w-[220px] rounded-md p-2 focus:ring-2 focus:ring-blue-400">
                 <SelectValue placeholder="Select a codec" />
@@ -160,10 +214,14 @@ export default function VideoSettings({ settings, onSettingsChange, open, onOpen
           </div>
 
           <div>
-            <label className="text-sm font-medium text-foreground/80">Audio Bitrate</label>
+            <label className="text-sm font-medium text-foreground/80">
+              Audio Bitrate
+            </label>
             <Select
               value={settings.audioBitrate}
-              onValueChange={(value) => handleSettingChange('audioBitrate', value)}
+              onValueChange={(value) =>
+                handleSettingChange('audioBitrate', value)
+              }
             >
               <SelectTrigger className="bg-card/50 border border-border w-full md:w-[220px] rounded-md p-2 focus:ring-2 focus:ring-blue-400">
                 <SelectValue placeholder="Select a bitrate" />
@@ -179,7 +237,9 @@ export default function VideoSettings({ settings, onSettingsChange, open, onOpen
           </div>
 
           <div>
-            <label className="text-sm font-medium text-foreground/80">Frame Rate</label>
+            <label className="text-sm font-medium text-foreground/80">
+              Frame Rate
+            </label>
             <Select
               value={settings.frameRate}
               onValueChange={(value) => handleSettingChange('frameRate', value)}
@@ -196,10 +256,14 @@ export default function VideoSettings({ settings, onSettingsChange, open, onOpen
           </div>
 
           <div>
-            <label className="text-sm font-medium text-foreground/80">Max Resolution</label>
+            <label className="text-sm font-medium text-foreground/80">
+              Max Resolution
+            </label>
             <Select
               value={settings.resolution}
-              onValueChange={(value) => handleSettingChange('resolution', value)}
+              onValueChange={(value) =>
+                handleSettingChange('resolution', value)
+              }
             >
               <SelectTrigger className="bg-card/50 border border-border w-full md:w-[220px] rounded-md p-2 focus:ring-2 focus:ring-blue-400">
                 <SelectValue placeholder="Select a resolution" />

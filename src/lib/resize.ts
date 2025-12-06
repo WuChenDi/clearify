@@ -1,17 +1,21 @@
 import { createCanvas, imageDataToCanvas } from './canvas'
 
 interface ResizeOptions {
-  width?: number;
-  height?: number;
-  maintainAspectRatio?: boolean;
+  width?: number
+  height?: number
+  maintainAspectRatio?: boolean
 }
 
 export function calculateDimensions(
   originalWidth: number,
   originalHeight: number,
-  options: ResizeOptions
+  options: ResizeOptions,
 ): { width: number; height: number } {
-  const { width: targetWidth = 0, height: targetHeight = 0, maintainAspectRatio = true } = options
+  const {
+    width: targetWidth = 0,
+    height: targetHeight = 0,
+    maintainAspectRatio = true,
+  } = options
 
   if (!targetWidth && !targetHeight) {
     return { width: originalWidth, height: originalHeight }
@@ -41,17 +45,20 @@ export function calculateDimensions(
 
   return {
     width: Math.max(1, finalWidth),
-    height: Math.max(1, finalHeight)
+    height: Math.max(1, finalHeight),
   }
 }
 
-export function resizeImage(imageData: ImageData, options: ResizeOptions): ImageData {
+export function resizeImage(
+  imageData: ImageData,
+  options: ResizeOptions,
+): ImageData {
   const sourceCanvas = imageDataToCanvas(imageData)
-  
+
   const { width, height } = calculateDimensions(
     imageData.width,
     imageData.height,
-    options
+    options,
   )
 
   const destCanvas = createCanvas(width, height)
@@ -60,8 +67,8 @@ export function resizeImage(imageData: ImageData, options: ResizeOptions): Image
   // Use better image scaling algorithm
   ctx.imageSmoothingEnabled = true
   ctx.imageSmoothingQuality = 'high'
-  
+
   ctx.drawImage(sourceCanvas, 0, 0, width, height)
-  
+
   return ctx.getImageData(0, 0, width, height)
 }
