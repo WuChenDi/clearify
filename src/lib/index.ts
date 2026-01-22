@@ -1,9 +1,9 @@
 export * from './canvas'
-export * from './cn'
 export * from './download'
 export * from './formatDefaults'
 export * from './imageProcessing'
 export * from './resize'
+export * from './utils'
 export * from './wasm'
 
 // Sample images from Unsplash
