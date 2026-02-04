@@ -158,4 +158,4 @@ dist
 .user.ini
 
 collect_files.sh
-files_summary.md
+files_summary*.md
