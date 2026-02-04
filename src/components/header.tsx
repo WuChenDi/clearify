@@ -1,6 +1,6 @@
 'use client'
 
-import { Github, ExternalLinkIcon } from 'lucide-react'
+import { ExternalLinkIcon, Github } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -24,6 +24,7 @@ export default function Header() {
               {'Clearify'.split('').map((letter, index) => {
                 return (
                   <span
+                    // biome-ignore lint/suspicious/noArrayIndexKey: no unique identifier available
                     key={index}
                     className="hover:text-fun-pink hover:-mt-2 transition-all duration-500 hover:duration-100 click:goodbyeLetterAnim text-white font-medium"
                   >

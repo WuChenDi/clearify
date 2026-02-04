@@ -1,11 +1,11 @@
+import type { LucideIcon } from 'lucide-react'
 import {
   ArrowRight,
-  Image,
-  Video,
-  Sparkles,
   FireExtinguisher,
+  Image,
+  Sparkles,
+  Video,
 } from 'lucide-react'
-import { LucideIcon } from 'lucide-react'
 import Link from 'next/link'
 
 import GradientText from '@/components/reactbits/GradientText'

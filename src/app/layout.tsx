@@ -1,6 +1,8 @@
+/** biome-ignore-all lint/security/noDangerouslySetInnerHtml: Required for JSON-LD structured data */
+
 import { GoogleAnalytics } from '@next/third-parties/google'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Geist, Geist_Mono } from 'next/font/google'
 import { Toaster } from 'sonner'
 
 import Footer from '@/components/footer'
@@ -8,10 +10,20 @@ import Header from '@/components/header'
 import Aurora from '@/components/reactbits/Aurora'
 import Particles from '@/components/reactbits/Particles'
 
-import { Providers } from './providers'
 import '@/app/globals.css'
+import { ClientProviders } from '@/components/client-providers'
 
-const inter = Inter({ subsets: ['latin'] })
+const geistSans = Geist({
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
+  preload: false,
+})
+
+const geistMono = Geist_Mono({
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
+  preload: false,
+})
 
 const BackgroundEffects = () => (
   <>
@@ -266,8 +278,10 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
         />
       </head>
-      <body className={inter.className}>
-        <Providers>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}
+      >
+        <ClientProviders>
           <BackgroundEffects />
           <main className="flex flex-col min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-white">
             <Header />
@@ -277,7 +291,7 @@ export default function RootLayout({
             <Footer />
             <Toaster richColors position="top-right" duration={3000} />
           </main>
-        </Providers>
+        </ClientProviders>
       </body>
       <GoogleAnalytics gaId="G-FPHG7CDDVQ" />
     </html>

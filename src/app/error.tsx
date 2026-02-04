@@ -3,7 +3,7 @@
 import GradientText from '@/components/reactbits/GradientText'
 import ShinyText from '@/components/reactbits/ShinyText'
 import { Button } from '@/components/ui/button'
-import { Card, CardHeader, CardContent } from '@/components/ui/card'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
 
 export default function Error({ reset }: { reset: () => void }) {
   return (
