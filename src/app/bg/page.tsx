@@ -1,8 +1,9 @@
 'use client'
 
-import { Upload, AlertTriangle, CheckCircle, XCircle } from 'lucide-react'
+import { AlertTriangle, CheckCircle, Upload, XCircle } from 'lucide-react'
 import Image from 'next/image'
-import React, { useState, useCallback, useEffect } from 'react'
+import type React from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { toast } from 'sonner'
 
@@ -11,14 +12,13 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
   SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select'
-import { cn, sampleImages } from '@/lib'
-import logger from '@/lib/logger'
-import { processImages, initializeModel, getModelInfo } from '@/lib/process'
+import { cn, logger, sampleImages } from '@/lib'
+import { getModelInfo, initializeModel, processImages } from '@/lib/process'
 
 interface BgError {
   message: string
@@ -185,7 +185,7 @@ export default function BG() {
       }
     }
     if (imageFiles.length > 0) {
-      onDrop(imageFiles)
+      await onDrop(imageFiles)
     }
   }
 
@@ -210,7 +210,7 @@ export default function BG() {
       }
       const file = new File([blob], 'sample-image.jpg', { type: blob.type })
       logger.log('File created:', file)
-      onDrop([file])
+      await onDrop([file])
     } catch (error) {
       logger.error('Error loading sample image:', error)
       toast.error(

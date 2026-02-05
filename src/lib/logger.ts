@@ -26,12 +26,10 @@ const debugWithTimestamp = (message?: any, ...optionalParams: any[]) => {
   console.debug(`[${timestamp}]`, message, ...optionalParams)
 }
 
-const logger = {
+export const logger = {
   log: logWithTimestamp,
   info: infoWithTimestamp,
   warn: warnWithTimestamp,
   error: errorWithTimestamp,
   debug: debugWithTimestamp,
 }
-
-export default logger

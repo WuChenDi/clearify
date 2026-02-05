@@ -5,50 +5,19 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Toaster } from 'sonner'
 
-import Footer from '@/components/footer'
-import Header from '@/components/header'
-import Aurora from '@/components/reactbits/Aurora'
-import Particles from '@/components/reactbits/Particles'
-
 import '@/app/globals.css'
-import { ClientProviders } from '@/components/client-providers'
+import { ClientProviders } from '@/components/layout/client-providers'
+import { Header } from '@/components/layout/header'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
-  preload: false,
 })
 
 const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   subsets: ['latin'],
-  preload: false,
 })
-
-const BackgroundEffects = () => (
-  <>
-    <div className="fixed inset-0">
-      <Aurora
-        colorStops={['#4C00FF', '#97FFF4', '#FF3D9A']}
-        blend={3.3}
-        amplitude={0.3}
-        speed={1.3}
-      />
-    </div>
-    <div className="fixed inset-0">
-      <Particles
-        particleColors={['#ffffff', '#ffffff']}
-        particleCount={400}
-        particleSpread={10}
-        speed={0.05}
-        particleBaseSize={100}
-        moveParticlesOnHover={false}
-        alphaParticles={false}
-        disableRotation={false}
-      />
-    </div>
-  </>
-)
 
 export const metadata: Metadata = {
   title: 'Clearify',
@@ -131,166 +100,151 @@ export const metadata: Metadata = {
   },
 }
 
-// JSON-LD Structured Data - WebSite
-const websiteSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: 'Clearify',
-  url: 'https://clearify.pages.dev/',
-  description:
-    'Powerful web-based AI tools for image editing. Remove backgrounds, compress images and videos.',
-  inLanguage: 'en-US',
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: 'https://clearify.pages.dev/?q={search_term_string}',
-    'query-input': 'required name=search_term_string',
-  },
-}
-
-// JSON-LD Structured Data - WebApplication
-const webApplicationSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'WebApplication',
-  name: 'Clearify',
-  description:
-    'AI-powered image editing tools including background removal, image compression, and video compression. All processing happens locally in your browser for maximum privacy.',
-  url: 'https://clearify.pages.dev/',
-  applicationCategory: 'MultimediaApplication',
-  operatingSystem: 'Web',
-  browserRequirements:
-    'Requires JavaScript. Compatible with Chrome 90+, Firefox 88+, Safari 14+, Edge 90+',
-  offers: {
-    '@type': 'Offer',
-    price: '0',
-    priceCurrency: 'USD',
-    availability: 'https://schema.org/InStock',
-  },
-  author: {
-    '@type': 'Person',
-    name: 'wudi',
-    url: 'https://github.com/WuChenDi',
-  },
-  publisher: {
-    '@type': 'Organization',
-    name: 'Clearify',
-    url: 'https://clearify.pages.dev/',
-  },
-  datePublished: '2024-01-01',
-  dateModified: '2025-11-04',
-  inLanguage: 'en-US',
-  isAccessibleForFree: true,
-  keywords:
-    'AI image editing, background removal, image compression, video compression, browser-based tools, privacy-focused',
-  screenshot: {
-    '@type': 'ImageObject',
-    contentUrl:
-      'https://cdn.jsdelivr.net/gh/cdLab996/picture-lib/wudi/Clearify/index.png',
-    description:
-      'Clearify interface screenshot showing AI-powered image editing tools',
-  },
-  softwareVersion: '1.0.0',
-  aggregateRating: {
-    '@type': 'AggregateRating',
-    ratingValue: '4.9',
-    ratingCount: '150',
-    bestRating: '5',
-    worstRating: '1',
-  },
-  featureList: [
-    'AI-powered background removal',
-    'Image compression up to 90%',
-    'Video compression',
-    'Local browser processing - no uploads',
-    'Support for JPEG, PNG, WebP formats',
-    'Privacy-focused - all data stays on your device',
-    'Free to use, no registration required',
-    'Responsive design for all devices',
-  ],
-  interactionStatistic: {
-    '@type': 'InteractionCounter',
-    interactionType: { '@type': 'http://schema.org/ViewAction' },
-    userInteractionCount: 5000,
-  },
-  sameAs: ['https://github.com/WuChenDi', 'https://x.com/wuchendi96'],
-}
-
-// JSON-LD Structured Data - SoftwareApplication
-const softwareApplicationSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'SoftwareApplication',
-  name: 'Clearify',
-  applicationCategory: 'MultimediaApplication',
-  offers: {
-    '@type': 'Offer',
-    price: '0',
-  },
-  operatingSystem: 'Any',
-  permissions: 'Browser access only',
-}
-
-// JSON-LD Structured Data - BreadcrumbList
-const breadcrumbSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
-  itemListElement: [
-    {
-      '@type': 'ListItem',
-      position: 1,
-      name: 'Home',
-      item: 'https://clearify.pages.dev/',
-    },
-  ],
-}
-
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode
-}) {
+}>) {
   return (
     <html lang="en">
       <head>
-        {/* JSON-LD Structured Data - Website */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
-        />
-
-        {/* JSON-LD Structured Data - WebApplication */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(webApplicationSchema),
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'WebSite',
+              name: 'Clearify',
+              url: 'https://clearify.pages.dev/',
+              description:
+                'Powerful web-based AI tools for image editing. Remove backgrounds, compress images and videos.',
+              inLanguage: 'en-US',
+              potentialAction: {
+                '@type': 'SearchAction',
+                target: 'https://clearify.pages.dev/?q={search_term_string}',
+                'query-input': 'required name=search_term_string',
+              },
+            }),
           }}
         />
 
-        {/* JSON-LD Structured Data - SoftwareApplication */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(softwareApplicationSchema),
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'WebApplication',
+              name: 'Clearify',
+              description:
+                'AI-powered image editing tools including background removal, image compression, and video compression. All processing happens locally in your browser for maximum privacy.',
+              url: 'https://clearify.pages.dev/',
+              applicationCategory: 'MultimediaApplication',
+              operatingSystem: 'Web',
+              browserRequirements:
+                'Requires JavaScript. Compatible with Chrome 90+, Firefox 88+, Safari 14+, Edge 90+',
+              offers: {
+                '@type': 'Offer',
+                price: '0',
+                priceCurrency: 'USD',
+                availability: 'https://schema.org/InStock',
+              },
+              author: {
+                '@type': 'Person',
+                name: 'wudi',
+                url: 'https://github.com/WuChenDi',
+              },
+              publisher: {
+                '@type': 'Organization',
+                name: 'Clearify',
+                url: 'https://clearify.pages.dev/',
+              },
+              datePublished: '2024-01-01',
+              dateModified: '2025-11-04',
+              inLanguage: 'en-US',
+              isAccessibleForFree: true,
+              keywords:
+                'AI image editing, background removal, image compression, video compression, browser-based tools, privacy-focused',
+              screenshot: {
+                '@type': 'ImageObject',
+                contentUrl:
+                  'https://cdn.jsdelivr.net/gh/cdLab996/picture-lib/wudi/Clearify/index.png',
+                description:
+                  'Clearify interface screenshot showing AI-powered image editing tools',
+              },
+              softwareVersion: '1.0.0',
+              aggregateRating: {
+                '@type': 'AggregateRating',
+                ratingValue: '4.9',
+                ratingCount: '150',
+                bestRating: '5',
+                worstRating: '1',
+              },
+              featureList: [
+                'AI-powered background removal',
+                'Image compression up to 90%',
+                'Video compression',
+                'Local browser processing - no uploads',
+                'Support for JPEG, PNG, WebP formats',
+                'Privacy-focused - all data stays on your device',
+                'Free to use, no registration required',
+                'Responsive design for all devices',
+              ],
+              interactionStatistic: {
+                '@type': 'InteractionCounter',
+                interactionType: { '@type': 'http://schema.org/ViewAction' },
+                userInteractionCount: 5000,
+              },
+              sameAs: [
+                'https://github.com/WuChenDi',
+                'https://x.com/wuchendi96',
+              ],
+            }),
           }}
         />
 
-        {/* JSON-LD Structured Data - BreadcrumbList */}
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'SoftwareApplication',
+              name: 'Clearify',
+              applicationCategory: 'MultimediaApplication',
+              offers: {
+                '@type': 'Offer',
+                price: '0',
+              },
+              operatingSystem: 'Any',
+              permissions: 'Browser access only',
+            }),
+          }}
+        />
+
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'BreadcrumbList',
+              itemListElement: [
+                {
+                  '@type': 'ListItem',
+                  position: 1,
+                  name: 'Home',
+                  item: 'https://clearify.pages.dev/',
+                },
+              ],
+            }),
+          }}
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ClientProviders>
-          <BackgroundEffects />
-          <main className="flex flex-col min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-white">
-            <Header />
-            <div className="container mx-auto px-4 py-12 flex flex-col items-center flex-1">
-              {children}
-            </div>
-            <Footer />
-            <Toaster richColors position="top-right" duration={3000} />
-          </main>
+          <Header />
+          {children}
+          <Toaster richColors position="top-center" duration={3000} />
         </ClientProviders>
       </body>
       <GoogleAnalytics gaId="G-FPHG7CDDVQ" />

@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react'
 
 import { decode, encode, getFileType } from '@/lib'
-import logger from '@/lib/logger'
+import {logger} from '@/lib/logger'
 import type { ImageFile, OutputType, CompressionOptions } from '@/types'
 
 export function useImageQueue(

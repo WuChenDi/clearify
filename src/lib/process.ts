@@ -6,7 +6,7 @@ import {
   RawImage,
 } from '@huggingface/transformers'
 
-import logger from '@/lib/logger'
+import { logger } from '@/lib'
 
 // Initialize different model configurations
 const WEBGPU_MODEL_ID = 'wuchendi/modnet'
