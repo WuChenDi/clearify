@@ -4,6 +4,7 @@ DIRS_TO_DELETE=(
   "node_modules"
   ".next"
   "out"
+  "dist"
 )
 
 echo "Start cleaning up directories: ${DIRS_TO_DELETE[*]}"
