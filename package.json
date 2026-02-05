@@ -11,8 +11,8 @@
     "url": "https://github.com/WuChenDi/clearify.git"
   },
   "scripts": {
-    "dev": "next dev --port 3008",
-    "build": "next build",
+    "dev": "next dev --port 3008 --webpack",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
@@ -55,6 +55,7 @@
     "@types/node": "^25",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@webgpu/types": "^0.1.69",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
