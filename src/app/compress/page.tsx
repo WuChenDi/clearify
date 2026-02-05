@@ -3,14 +3,14 @@
 import { FFmpeg } from '@ffmpeg/ffmpeg'
 import { fetchFile, toBlobURL } from '@ffmpeg/util'
 import {
+  AlertTriangle,
   FileVideo,
+  Loader2,
+  Settings,
   Upload,
   X,
-  Loader2,
-  AlertTriangle,
-  Settings,
 } from 'lucide-react'
-import React, { useState, useRef, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { toast } from 'sonner'
 
@@ -18,9 +18,9 @@ import VideoSettings from '@/components/compress/VideoSettings'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
-import { cn, formatFileSize } from '@/lib'
-import logger from '@/lib/logger'
-import { ConversionSettings, defaultSettings } from '@/types'
+import { cn, formatFileSize, logger } from '@/lib'
+import type { ConversionSettings } from '@/types'
+import { defaultSettings } from '@/types'
 
 const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.10/dist/umd'
 
@@ -269,7 +269,7 @@ export default function Compress() {
                   <Button
                     onClick={(e) => {
                       e.stopPropagation()
-                      loadFFmpeg()
+                      void loadFFmpeg()
                     }}
                     className="bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-600 hover:to-purple-600 border-none rounded-md px-3 py-1 sm:px-4 sm:py-2 text-sm sm:text-base"
                   >

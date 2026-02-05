@@ -1,8 +1,6 @@
 import { useCallback } from 'react'
-
-import { decode, encode, getFileType } from '@/lib'
-import logger from '@/lib/logger'
-import type { ImageFile, OutputType, CompressionOptions } from '@/types'
+import { decode, encode, getFileType, logger } from '@/lib'
+import type { CompressionOptions, ImageFile, OutputType } from '@/types'
 
 export function useImageProcessing(
   options: CompressionOptions,

@@ -1,5 +1,3 @@
-import React from 'react'
-
 import {
   Dialog,
   DialogContent,
@@ -9,10 +7,10 @@ import {
 import { Input } from '@/components/ui/input'
 import {
   Select,
-  SelectTrigger,
-  SelectValue,
   SelectContent,
   SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from '@/components/ui/select'
 import type { ConversionSettings } from '@/types'
 
@@ -90,7 +88,7 @@ export default function VideoSettings({
               value={settings.crfValue || '23'}
               onValueChange={(value) => handleSettingChange('crfValue', value)}
             >
-              <SelectTrigger className="bg-card/50 border border-border w-full md:w-[220px] rounded-md p-2 focus:ring-2 focus:ring-blue-400">
+              <SelectTrigger className="bg-card/50 border border-border w-full rounded-md p-2 focus:ring-2 focus:ring-blue-400">
                 <SelectValue placeholder="Select a quality" />
               </SelectTrigger>
               <SelectContent className="border-border bg-popover/90 rounded-md">
@@ -120,7 +118,7 @@ export default function VideoSettings({
                 handleSettingChange('videoBitrate', value)
               }
             >
-              <SelectTrigger className="bg-card/50 border border-border w-full md:w-[220px] rounded-md p-2 focus:ring-2 focus:ring-blue-400">
+              <SelectTrigger className="bg-card/50 border border-border w-full rounded-md p-2 focus:ring-2 focus:ring-blue-400">
                 <SelectValue placeholder="Select a bitrate" />
               </SelectTrigger>
               <SelectContent className="border-border bg-popover/90 rounded-md">
@@ -154,7 +152,7 @@ export default function VideoSettings({
                 handleSettingChange('compressionMethod', value)
               }
             >
-              <SelectTrigger className="bg-card/50 border border-border w-full md:w-[220px] rounded-md p-2 focus:ring-2 focus:ring-blue-400">
+              <SelectTrigger className="bg-card/50 border border-border w-full rounded-md p-2 focus:ring-2 focus:ring-blue-400">
                 <SelectValue placeholder="Select a method" />
               </SelectTrigger>
               <SelectContent className="border-border bg-popover/90 rounded-md">
@@ -183,7 +181,7 @@ export default function VideoSettings({
                 handleSettingChange('videoCodec', value)
               }
             >
-              <SelectTrigger className="bg-card/50 border border-border w-full md:w-[220px] rounded-md p-2 focus:ring-2 focus:ring-blue-400">
+              <SelectTrigger className="bg-card/50 border border-border w-full rounded-md p-2 focus:ring-2 focus:ring-blue-400">
                 <SelectValue placeholder="Select a codec" />
               </SelectTrigger>
               <SelectContent className="border-border bg-popover/90 rounded-md">
@@ -203,7 +201,7 @@ export default function VideoSettings({
                 handleSettingChange('audioCodec', value)
               }
             >
-              <SelectTrigger className="bg-card/50 border border-border w-full md:w-[220px] rounded-md p-2 focus:ring-2 focus:ring-blue-400">
+              <SelectTrigger className="bg-card/50 border border-border w-full rounded-md p-2 focus:ring-2 focus:ring-blue-400">
                 <SelectValue placeholder="Select a codec" />
               </SelectTrigger>
               <SelectContent className="border-border bg-popover/90 rounded-md">
@@ -223,7 +221,7 @@ export default function VideoSettings({
                 handleSettingChange('audioBitrate', value)
               }
             >
-              <SelectTrigger className="bg-card/50 border border-border w-full md:w-[220px] rounded-md p-2 focus:ring-2 focus:ring-blue-400">
+              <SelectTrigger className="bg-card/50 border border-border w-full rounded-md p-2 focus:ring-2 focus:ring-blue-400">
                 <SelectValue placeholder="Select a bitrate" />
               </SelectTrigger>
               <SelectContent className="border-border bg-popover/90 rounded-md">
@@ -244,7 +242,7 @@ export default function VideoSettings({
               value={settings.frameRate}
               onValueChange={(value) => handleSettingChange('frameRate', value)}
             >
-              <SelectTrigger className="bg-card/50 border border-border w-full md:w-[220px] rounded-md p-2 focus:ring-2 focus:ring-blue-400">
+              <SelectTrigger className="bg-card/50 border border-border w-full rounded-md p-2 focus:ring-2 focus:ring-blue-400">
                 <SelectValue placeholder="Select a frame rate" />
               </SelectTrigger>
               <SelectContent className="border-border bg-popover/90 rounded-md">
@@ -265,7 +263,7 @@ export default function VideoSettings({
                 handleSettingChange('resolution', value)
               }
             >
-              <SelectTrigger className="bg-card/50 border border-border w-full md:w-[220px] rounded-md p-2 focus:ring-2 focus:ring-blue-400">
+              <SelectTrigger className="bg-card/50 border border-border w-full rounded-md p-2 focus:ring-2 focus:ring-blue-400">
                 <SelectValue placeholder="Select a resolution" />
               </SelectTrigger>
               <SelectContent className="border-border bg-popover/90 rounded-md">
