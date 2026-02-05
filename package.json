@@ -11,14 +11,16 @@
     "url": "https://github.com/WuChenDi/clearify.git"
   },
   "scripts": {
-    "dev": "next dev --port 3008 --webpack",
-    "build": "next build --webpack",
+    "dev": "next dev --port 3008",
+    "build": "next build",
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
     "clean": "bash ./scripts/clean.sh"
   },
   "dependencies": {
+    "@base-ui/react": "^1.1.0",
+    "@cdlab996/genid": "^1.1.0",
     "@ffmpeg/core": "^0.12.10",
     "@ffmpeg/ffmpeg": "^0.12.15",
     "@ffmpeg/util": "^0.12.2",
@@ -31,9 +33,9 @@
     "@next/third-parties": "16.1.6",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "cmdk": "^1.1.1",
     "jszip": "^3.10.1",
     "lucide-react": "^0.563.0",
+    "motion": "^12.23.12",
     "next": "16.1.6",
     "next-themes": "^0.4.6",
     "ogl": "^1.0.11",
@@ -42,7 +44,7 @@
     "react-compare-slider": "^3.1.0",
     "react-dom": "^19",
     "react-dropzone": "^14.4.0",
-    "shadcn": "^3.8.2",
+    "shadcn": "^3.8.3",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.4.0",
     "tw-animate-css": "^1.4.0"
@@ -53,9 +55,7 @@
     "@types/node": "^25",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@webgpu/types": "^0.1.68",
     "tailwindcss": "^4",
-    "typescript": "^5",
-    "worker-loader": "^3.0.8"
+    "typescript": "^5"
   }
 }
