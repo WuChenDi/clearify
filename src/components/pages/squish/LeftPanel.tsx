@@ -1,7 +1,6 @@
 'use client'
 
-import { Upload } from 'lucide-react'
-import { cn } from '@/lib'
+import { IKMediaUpload } from '@/components/IK'
 import type {
   CompressionOptions as CompressionOptionsType,
   OutputType,
@@ -45,34 +44,14 @@ export const LeftPanel = ({
     />
 
     {/* Upload Area */}
-    <div
-      {...getRootProps()}
-      className={cn(
-        'p-8 border border-dashed rounded-md text-center cursor-pointer transition-all duration-300',
-        'bg-[#1a1b2e]/40 backdrop-blur-md',
-        'hover:border-blue-500/80 hover:bg-blue-500/10',
-        {
-          'border-green-500/70 bg-green-500/10': isDragAccept,
-          'border-red-500/70 bg-red-500/10': isDragReject,
-          'border-blue-500/70 bg-blue-500/10': isDragActive,
-          'border-white/[0.1]': !isDragActive && !isDragAccept && !isDragReject,
-        },
-      )}
-    >
-      <input {...getInputProps()} className="hidden" />
-      <div className="flex flex-col items-center gap-3">
-        <Upload className="size-12 text-primary" />
-        <p className="text-base font-medium text-foreground/90">
-          {isDragActive ? 'Drop here...' : 'Upload Images'}
-        </p>
-        <p className="text-xs text-muted-foreground">
-          Drag & drop or click to select
-        </p>
-        <p className="text-xs text-muted-foreground/70">
-          JPEG, PNG, WebP, AVIF, JXL
-        </p>
-      </div>
-    </div>
+    <IKMediaUpload
+      getRootProps={getRootProps}
+      getInputProps={getInputProps}
+      isDragActive={isDragActive}
+      isDragAccept={isDragAccept}
+      isDragReject={isDragReject}
+      acceptedFormats="JPEG, PNG, WebP, AVIF, JXL"
+    />
 
     {/* Sample Images */}
     <SampleImages onSampleImageClick={onSampleImageClick} />
