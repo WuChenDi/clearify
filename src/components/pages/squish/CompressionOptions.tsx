@@ -5,7 +5,10 @@ import { Field } from '@/components/ui/field'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
-import type { CompressionOptions as CompressionOptionsType, OutputType } from '@/types'
+import type {
+  CompressionOptions as CompressionOptionsType,
+  OutputType,
+} from '@/types'
 
 interface CompressionOptionsProps {
   outputType: OutputType
@@ -20,7 +23,7 @@ export const CompressionOptions = ({
   onOutputTypeChange,
   onQualityChange,
 }: CompressionOptionsProps) => (
-  <Card className="p-4">
+  <Card className="p-4 rounded-md">
     <Field>
       <Label>Output Format</Label>
       <ToggleGroup

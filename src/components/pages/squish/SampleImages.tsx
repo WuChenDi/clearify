@@ -13,7 +13,7 @@ interface SampleImagesProps {
 export const SampleImages = ({ onSampleImageClick }: SampleImagesProps) => (
   <Field>
     <Label>Try Sample Images</Label>
-    <div className="grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-2.5 auto-rows-fr">
       {sampleImages.map((url, index) => (
         <div
           // biome-ignore lint/suspicious/noArrayIndexKey: no unique identifier available
