@@ -1,6 +1,13 @@
 'use client'
 
-import { Upload } from 'lucide-react'
+import { CloudUpload } from 'lucide-react'
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from '@/components/ui/empty'
 import { downloadImage } from '@/lib'
 import type { ImageFile } from '@/types'
 import { ImageItem } from './ImageItem'
@@ -20,17 +27,15 @@ export const RightPanel = ({
 }: RightPanelProps) => {
   if (images.length === 0) {
     return (
-      <div className="flex items-center justify-center h-full min-h-[400px]">
-        <div className="text-center space-y-3">
-          <div className="w-20 h-20 mx-auto rounded-full bg-blue-500/10 flex items-center justify-center">
-            <Upload className="w-10 h-10 text-blue-400/50" />
-          </div>
-          <p className="text-lg text-muted-foreground">No images yet</p>
-          <p className="text-sm text-muted-foreground/70">
-            Upload images to get started
-          </p>
-        </div>
-      </div>
+      <Empty className="h-full min-h-[400px]">
+        <EmptyHeader>
+          <EmptyMedia>
+            <CloudUpload className="size-10" />
+          </EmptyMedia>
+          <EmptyTitle className="text-lg">No images yet</EmptyTitle>
+          <EmptyDescription>Upload images to get started</EmptyDescription>
+        </EmptyHeader>
+      </Empty>
     )
   }
 
