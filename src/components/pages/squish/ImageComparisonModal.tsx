@@ -71,7 +71,7 @@ export const ImageComparisonModal = ({
             </div>
           </div>
 
-          <div className="relative aspect-video w-full max-h-[60vh] overflow-hidden rounded-lg border border-border/30">
+          <div className="relative aspect-video w-full max-h-[60vh] overflow-hidden rounded-lg bg-background border border-border/30">
             <ReactCompareSlider
               itemOne={
                 <ReactCompareSliderImage
